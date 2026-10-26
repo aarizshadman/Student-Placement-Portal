@@ -1,0 +1,11 @@
+---
+import Layout from '../layouts/Layout.astro';
+import LandingPage from '../components/Landing/LandingPage.jsx';
+---
+
+<Layout 
+  title="CampusConnect"
+  description="CampusConnect streamlines the placement process by linking student profiles, portfolios, and resumes directly with vetted corporate recruiters."
+>
+  <LandingPage client:only="react" />
+</Layout>
