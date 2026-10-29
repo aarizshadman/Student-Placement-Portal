@@ -6,34 +6,32 @@ const portals = [
   {
     key: 'student',
     name: 'Student Portal',
-    desc: 'Browse placements, apply for jobs, and manage your professional profile.',
+    desc: 'Explore active placements, apply for jobs, and build your professional profile.',
     href: '/student',
     icon: GraduationCap,
-    accent: 'from-blue-500/20 to-blue-500/5 text-blue-400 border-blue-500/20'
+    accent: 'bg-[#0066cc]/10 text-[#0066cc] border-[#0066cc]/20'
   },
   {
     key: 'company',
     name: 'Recruiter Portal',
-    desc: 'Post vacancies, filter candidates, and shortlist top campus talent.',
+    desc: 'Publish openings, filter candidate pools, and shortlist top campus talent.',
     href: '/company',
     icon: Building2,
-    accent: 'from-violet-500/20 to-violet-500/5 text-violet-400 border-violet-500/20'
+    accent: 'bg-[#5856d6]/10 text-[#5856d6] border-[#5856d6]/20'
   },
   {
     key: 'admin',
     name: 'Admin Portal',
-    desc: 'Placement cell control desk. Local database sign-in.',
+    desc: 'Placement cell management desk, verification queue, and batch analytics.',
     href: '/admin',
     icon: ShieldCheck,
-    accent: 'from-primary/20 to-primary/5 text-primary border-primary/20'
+    accent: 'bg-[#34c759]/10 text-[#34c759] border-[#34c759]/20'
   }
 ];
 
 export default function PortalChooser() {
   return (
-    <div className="min-h-[80vh] w-full flex items-center justify-center px-6 py-12 relative">
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-
+    <div className="min-h-[80vh] w-full flex items-center justify-center px-6 py-12">
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -41,14 +39,14 @@ export default function PortalChooser() {
         className="w-full max-w-3xl flex flex-col gap-6"
       >
         <div className="text-center flex flex-col gap-2">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-sm text-primary mx-auto">
+          <div className="w-10 h-10 rounded-full bg-[#0066cc]/10 border border-[#0066cc]/20 flex items-center justify-center font-bold text-sm text-[#0066cc] mx-auto">
             C
           </div>
-          <h2 className="text-xl font-bold text-ink">Sign in to CampusConnect</h2>
-          <p className="text-xs text-ink-subtle">Choose the portal that matches your role</p>
+          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Sign in to CampusConnect</h2>
+          <p className="text-xs text-[#86868b]">Choose the portal that matches your role</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {portals.map((portal, i) => (
             <motion.a
               key={portal.key}
@@ -56,24 +54,26 @@ export default function PortalChooser() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: i * 0.06 }}
-              className="group glass rounded-xl border border-hairline hover:border-hairline-strong p-6 flex flex-col gap-4 transition-all hover:-translate-y-0.5 cursor-pointer"
+              className="group bg-white rounded-[22px] border border-[#e5e5ea] hover:border-[#d2d2d7] p-7 flex flex-col justify-between gap-6 transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-1 cursor-pointer"
             >
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center border ${portal.accent}`}>
-                <portal.icon size={19} />
+              <div className="flex flex-col gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${portal.accent}`}>
+                  <portal.icon size={22} />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <h3 className="text-base font-semibold text-[#1d1d1f]">{portal.name}</h3>
+                  <p className="text-xs text-[#6e6e73] leading-relaxed">{portal.desc}</p>
+                </div>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <h3 className="text-sm font-bold text-ink">{portal.name}</h3>
-                <p className="text-[11px] text-ink-subtle leading-relaxed">{portal.desc}</p>
-              </div>
-              <span className="flex items-center gap-1 text-[11px] font-semibold text-primary group-hover:gap-2 transition-all">
-                Sign in <ArrowRight size={12} />
+              <span className="flex items-center gap-1.5 text-xs font-medium text-[#0066cc] group-hover:gap-2.5 transition-all">
+                Access Portal <ArrowRight size={13} />
               </span>
             </motion.a>
           ))}
         </div>
 
-        <p className="text-center text-[11px] text-ink-tertiary">
-          Student and Recruiter portals use IBM App ID single sign-on. Admin portal uses the placement cell database.
+        <p className="text-center text-xs text-[#86868b]">
+          Student and Recruiter portals support single sign-on. Admin portal authenticates via placement cell database.
         </p>
       </motion.div>
     </div>

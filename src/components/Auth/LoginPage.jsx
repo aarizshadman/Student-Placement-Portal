@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
 import { api } from '../../utils/api.js';
 import { setSession, isAuthenticated, getRole } from '../../utils/auth.js';
 
@@ -39,42 +39,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] w-full flex items-center justify-center px-6 py-12 relative">
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-      
+    <div className="min-h-[85vh] w-full flex items-center justify-center px-6 py-12">
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-[400px] glass p-8 rounded-xl flex flex-col gap-6 shadow-2xl shadow-black"
+        className="w-full max-w-[420px] bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[26px] flex flex-col gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
       >
         {/* Card Header */}
         <div className="text-center flex flex-col gap-2">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-sm text-primary mx-auto">
+          <div className="w-10 h-10 rounded-full bg-[#0066cc]/10 border border-[#0066cc]/20 flex items-center justify-center font-bold text-sm text-[#0066cc] mx-auto">
             C
           </div>
-          <h2 className="text-xl font-bold text-ink">Sign in to CampusConnect</h2>
-          <p className="text-xs text-ink-subtle">Enter your credentials to access your dashboard</p>
+          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Sign In</h2>
+          <p className="text-xs text-[#86868b]">Use your CampusConnect placement credentials</p>
         </div>
 
         {/* Demo credentials callout */}
-        <div className="bg-surface-2 border border-hairline rounded-lg p-3 text-[10px] text-ink-subtle leading-relaxed">
-          <div className="font-semibold text-primary mb-1">Demo Credentials:</div>
-          <div className="grid grid-cols-2 gap-x-2">
-            <span>• Student: student1@placement.edu</span>
+        <div className="bg-[#f5f5f7] border border-[#e5e5ea] rounded-xl p-3.5 text-xs text-[#6e6e73] leading-relaxed">
+          <div className="font-semibold text-[#1d1d1f] mb-1">Demo Credentials:</div>
+          <div className="grid grid-cols-2 gap-x-2 text-[11px]">
+            <span>Student: <code className="text-[#0066cc]">student1@placement.edu</code></span>
             <span>(password123)</span>
-            <span>• Company: hr@ibm.com</span>
+            <span>Company: <code className="text-[#0066cc]">hr@ibm.com</code></span>
             <span>(password123)</span>
           </div>
-          <div className="mt-2 pt-2 border-t border-hairline">
+          <div className="mt-2 pt-2 border-t border-[#e5e5ea] text-[11px]">
             Administrators sign in at the{' '}
-            <a href="/admin" className="text-primary hover:underline font-semibold">Admin Portal</a>.
+            <a href="/admin" className="text-[#0066cc] hover:underline font-medium">Admin Portal</a>.
           </div>
         </div>
 
         {/* Error Feedback */}
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-950/20 border border-red-950/50 rounded-lg text-xs text-red-400">
+          <div className="flex items-start gap-2 p-3 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-xl text-xs text-[#ff3b30]">
             <AlertCircle size={14} className="shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
@@ -83,15 +81,15 @@ export default function LoginPage() {
         {/* Form Fields */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-[11px] font-medium text-ink-subtle mb-1.5">Email address</label>
+            <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Email address</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-2.5 text-ink-subtle" size={16} />
+              <Mail className="absolute left-3.5 top-3 text-[#86868b]" size={16} />
               <input 
                 type="email" 
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded pl-9 pr-3 py-2 text-sm text-ink transition-all"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
                 placeholder="aarav@placement.edu"
               />
             </div>
@@ -99,16 +97,16 @@ export default function LoginPage() {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="text-[11px] font-medium text-ink-subtle">Password</label>
+              <label className="text-xs font-medium text-[#1d1d1f]">Password</label>
             </div>
             <div className="relative">
-              <Lock className="absolute left-3 top-2.5 text-ink-subtle" size={16} />
+              <Lock className="absolute left-3.5 top-3 text-[#86868b]" size={16} />
               <input 
                 type="password" 
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded pl-9 pr-3 py-2 text-sm text-ink transition-all"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -117,7 +115,7 @@ export default function LoginPage() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-white bg-primary hover:bg-primary-hover py-2 rounded-md transition-colors disabled:bg-primary-hover/50 disabled:cursor-not-allowed cursor-pointer mt-2 shadow-md shadow-primary/10"
+            className="w-full flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] py-2.5 rounded-full transition-all disabled:opacity-60 cursor-pointer mt-2 shadow-sm"
           >
             {loading ? <span>Signing in...</span> : (
               <>
@@ -128,10 +126,15 @@ export default function LoginPage() {
           </button>
         </form>
 
+        <div className="text-center text-xs text-[#86868b]">
+          Don't have an account?{' '}
+          <a href="/register" className="text-[#0066cc] hover:underline font-medium">
+            Register here
+          </a>
+        </div>
 
-
-        <div className="text-center text-[10px] text-ink-tertiary">
-          <a href="/admin" className="hover:text-primary transition-colors">
+        <div className="text-center text-[11px] text-[#86868b] border-t border-[#e5e5ea] pt-3">
+          <a href="/admin" className="hover:text-[#0066cc] transition-colors">
             Administrator? Go to Admin Portal
           </a>
         </div>

@@ -10,7 +10,7 @@ interface Props {
 
 const { 
   title = "CampusConnect - Student Placement Portal",
-  description = "A premium, production-ready portal linking student talent with top global recruiters. Built with React, Tailwind v4, Express, and MongoDB."
+  description = "A premium, Apple-inspired university placement portal linking student profiles, portfolios, and resumes directly with vetted enterprise recruiters."
 } = Astro.props;
 ---
 
@@ -29,11 +29,12 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     
-    <!-- Preconnect to external resources -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   </head>
-  <body class="flex flex-col min-h-screen selection:bg-primary selection:text-white">
+  <body class="flex flex-col min-h-screen bg-[#f5f5f7] text-[#1d1d1f] font-sans selection:bg-[#0066cc] selection:text-white antialiased">
     <!-- Interactive React Header Navbar -->
     <Navbar client:load />
 

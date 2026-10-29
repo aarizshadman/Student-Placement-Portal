@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, ShieldCheck, AlertCircle, User } from 'lucide-react';
+import { Mail, Lock, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { api } from '../../utils/api.js';
 import { setSession } from '../../utils/auth.js';
 
@@ -19,7 +19,7 @@ export default function AdminLoginPage({ onSuccess }) {
       const data = await api.auth.login({ email, password });
 
       if (data.role !== 'admin') {
-        setError('Access restricted. This portal is for administrators only.');
+        setError('Access restricted. This portal is for placement cell administrators only.');
         setLoading(false);
         return;
       }
@@ -31,41 +31,41 @@ export default function AdminLoginPage({ onSuccess }) {
         window.location.href = '/admin';
       }
     } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Login failed. Please check your administrator credentials.');
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-[80vh] w-full flex items-center justify-center px-6 py-12 relative">
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-
+    <div className="min-h-[85vh] w-full flex items-center justify-center px-6 py-12">
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-[400px] glass p-8 rounded-xl flex flex-col gap-6 shadow-2xl shadow-black"
+        transition={{ duration: 0.35 }}
+        className="w-full max-w-[420px] bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[26px] flex flex-col gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
       >
         {/* Card Header */}
         <div className="text-center flex flex-col gap-2">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary mx-auto">
+          <div className="w-10 h-10 rounded-full bg-[#34c759]/10 border border-[#34c759]/20 flex items-center justify-center text-[#34c759] mx-auto">
             <ShieldCheck size={20} />
           </div>
-          <h2 className="text-xl font-bold text-ink">Admin Portal</h2>
-          <p className="text-xs text-ink-subtle">Restricted to placement cell administrators</p>
+          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Placement Cell Admin</h2>
+          <p className="text-xs text-[#86868b]">Control desk for university verification & placements</p>
         </div>
 
         {/* Demo credentials callout */}
-        <div className="bg-surface-2 border border-hairline rounded-lg p-3 text-[10px] text-ink-subtle leading-relaxed">
-          <div className="font-semibold text-primary mb-1">Demo Admin:</div>
-          <div>admin@placement.edu</div>
-          <div className="mt-0.5">(admin123)</div>
+        <div className="bg-[#f5f5f7] border border-[#e5e5ea] rounded-xl p-3.5 text-xs text-[#6e6e73] leading-relaxed">
+          <div className="font-semibold text-[#1d1d1f] mb-1">Demo Administrator:</div>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#0066cc] font-mono">admin@placement.edu</span>
+            <span>(admin123)</span>
+          </div>
         </div>
 
         {/* Error Feedback */}
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-950/20 border border-red-950/50 rounded-lg text-xs text-red-400">
-            <AlertCircle size={14} className="shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2.5 p-3.5 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-2xl text-xs text-[#ff3b30]">
+            <AlertCircle size={15} className="shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
@@ -73,30 +73,30 @@ export default function AdminLoginPage({ onSuccess }) {
         {/* Form Fields */}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="block text-[11px] font-medium text-ink-subtle mb-1.5">Email address</label>
+            <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Administrator Email</label>
             <div className="relative">
-              <Mail className="absolute left-3 top-2.5 text-ink-subtle" size={16} />
+              <Mail className="absolute left-3.5 top-3 text-[#86868b]" size={15} />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded pl-9 pr-3 py-2 text-sm text-ink transition-all"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
                 placeholder="admin@placement.edu"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-medium text-ink-subtle mb-1.5">Password</label>
+            <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Security Password</label>
             <div className="relative">
-              <Lock className="absolute left-3 top-2.5 text-ink-subtle" size={16} />
+              <Lock className="absolute left-3.5 top-3 text-[#86868b]" size={15} />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded pl-9 pr-3 py-2 text-sm text-ink transition-all"
+                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -105,9 +105,9 @@ export default function AdminLoginPage({ onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-white bg-primary hover:bg-primary-hover py-2 rounded-md transition-colors disabled:bg-primary-hover/50 disabled:cursor-not-allowed cursor-pointer mt-2 shadow-md shadow-primary/10"
+            className="w-full flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] active:scale-[0.98] py-2.5 rounded-full transition-all duration-200 disabled:opacity-60 cursor-pointer mt-2 shadow-sm"
           >
-            {loading ? <span>Signing in...</span> : (
+            {loading ? <span>Authenticating...</span> : (
               <>
                 <span>Sign In to Admin</span>
                 <ArrowRight size={14} />
@@ -116,11 +116,11 @@ export default function AdminLoginPage({ onSuccess }) {
           </button>
         </form>
 
-        <hr className="border-hairline" />
+        <hr className="border-[#e5e5ea]" />
 
-        <div className="text-center text-xs text-ink-subtle">
+        <div className="text-center text-xs text-[#86868b]">
           Not an administrator?{' '}
-          <a href="/login" className="text-primary hover:text-primary-hover font-medium underline">
+          <a href="/login" className="text-[#0066cc] hover:underline font-medium">
             User login
           </a>
         </div>

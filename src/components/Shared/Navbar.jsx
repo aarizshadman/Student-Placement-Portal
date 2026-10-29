@@ -33,7 +33,7 @@ export default function Navbar() {
     try {
       const data = await api.students.getNotifications();
       setUnreadCount(data.filter(n => !n.read).length);
-    } catch (err) {
+    } catch {
       // Fail silently
     }
   };
@@ -43,13 +43,6 @@ export default function Navbar() {
     window.location.href = '/';
   };
 
-  const getDashboardLink = (role) => {
-    if (role === 'student') return '/student/dashboard';
-    if (role === 'company') return '/company/dashboard';
-    if (role === 'admin') return '/admin';
-    return '/';
-  };
-
   const renderNavLinks = () => {
     const defaultLinks = [
       { name: 'Home', href: '/' }
@@ -57,7 +50,11 @@ export default function Navbar() {
 
     if (!user) {
       return defaultLinks.map(link => (
-        <a key={link.name} href={link.href} className="text-sm font-medium text-ink-subtle hover:text-ink transition-colors duration-150">
+        <a 
+          key={link.name} 
+          href={link.href} 
+          className="text-[13px] font-normal text-[#1d1d1f]/80 hover:text-[#0066cc] transition-colors duration-150"
+        >
           {link.name}
         </a>
       ));
@@ -69,7 +66,7 @@ export default function Navbar() {
       roleLinks.push(
         { name: 'Dashboard', href: '/student/dashboard', icon: Award },
         { name: 'Jobs Feed', href: '/student/dashboard?tab=jobs', icon: Briefcase },
-        { name: 'Assistant Chatbot', href: '/student/dashboard?tab=chatbot', icon: MessageCircle }
+        { name: 'AI Assistant', href: '/student/dashboard?tab=chatbot', icon: MessageCircle }
       );
     } else if (user.role === 'company') {
       roleLinks.push(
@@ -83,21 +80,25 @@ export default function Navbar() {
     }
 
     return [...defaultLinks, ...roleLinks].map(link => (
-      <a key={link.name} href={link.href} className="flex items-center gap-1.5 text-sm font-medium text-ink-subtle hover:text-ink transition-colors duration-150">
-        {link.icon && <link.icon size={15} className="text-primary" />}
-        {link.name}
+      <a 
+        key={link.name} 
+        href={link.href} 
+        className="flex items-center gap-1.5 text-[13px] font-normal text-[#1d1d1f]/80 hover:text-[#0066cc] transition-colors duration-150"
+      >
+        {link.icon && <link.icon size={14} className="text-[#0066cc]" />}
+        <span>{link.name}</span>
       </a>
     ));
   };
 
   return (
-    <nav className="sticky top-0 z-50 w-full h-14 bg-canvas/80 backdrop-blur-md border-b border-hairline flex items-center justify-between px-6 md:px-12 select-none">
-      {/* Wordmark Logo */}
+    <nav className="sticky top-0 z-50 w-full h-12 bg-white/80 backdrop-blur-xl border-b border-[#e5e5ea] flex items-center justify-between px-6 md:px-12 select-none transition-all duration-200">
+      {/* Apple-style Logo Wordmark */}
       <a href="/" className="flex items-center gap-2 group">
-        <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center font-bold text-xs text-white shadow-lg shadow-primary/20 group-hover:bg-primary-hover transition-colors">
+        <div className="w-5 h-5 rounded-full bg-[#0066cc] flex items-center justify-center font-bold text-[10px] text-white shadow-sm group-hover:bg-[#0077ed] transition-colors">
           C
         </div>
-        <span className="text-base font-bold text-ink tracking-tight bg-gradient-to-r from-ink via-ink to-primary bg-clip-text text-transparent group-hover:to-primary-hover transition-colors duration-300">
+        <span className="text-sm font-semibold tracking-tight text-[#1d1d1f]">
           CampusConnect
         </span>
       </a>
@@ -108,30 +109,35 @@ export default function Navbar() {
       </div>
 
       {/* Desktop Auth Section */}
-      <div className="hidden md:flex items-center gap-4">
+      <div className="hidden md:flex items-center gap-3">
         {user ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {user.role === 'student' && (
-              <a href="/student/dashboard?tab=notifications" className="relative p-1.5 rounded-md hover:bg-surface-1 border border-transparent hover:border-hairline transition-all">
-                <Bell size={18} className="text-ink-subtle hover:text-ink" />
+              <a 
+                href="/student/dashboard?tab=notifications" 
+                className="relative p-1.5 rounded-full hover:bg-[#f5f5f7] border border-transparent hover:border-[#e5e5ea] transition-all"
+                title="Notifications"
+              >
+                <Bell size={16} className="text-[#6e6e73] hover:text-[#1d1d1f]" />
                 {unreadCount > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-success-green ring-2 ring-canvas" />
+                  <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#34c759] ring-2 ring-white" />
                 )}
               </a>
             )}
-            <div className="flex items-center gap-2 px-3 py-1 bg-surface-1 border border-hairline rounded-md text-xs font-mono text-ink-subtle">
-              <User size={13} className="text-primary" />
-              <span>{user.email.split('@')[0]}</span>
-              <span className="px-1.5 py-0.5 rounded bg-surface-2 text-[10px] uppercase font-sans tracking-wide">
+            
+            <div className="flex items-center gap-2 px-3 py-1 bg-[#f5f5f7] border border-[#e5e5ea] rounded-full text-xs text-[#1d1d1f]">
+              <User size={12} className="text-[#0066cc]" />
+              <span className="font-medium">{user.email.split('@')[0]}</span>
+              <span className="px-1.5 py-0.2 rounded-full bg-white text-[10px] text-[#6e6e73] border border-[#e5e5ea] uppercase font-semibold tracking-wide">
                 {user.role}
               </span>
             </div>
             
             <button 
               onClick={handleLogout} 
-              className="flex items-center gap-1.5 text-xs font-medium text-ink-subtle hover:text-red-400 bg-surface-1 border border-hairline hover:border-red-950/50 hover:bg-red-950/10 px-3 py-1.5 rounded-md transition-all cursor-pointer"
+              className="flex items-center gap-1.5 text-xs font-normal text-[#6e6e73] hover:text-[#ff3b30] bg-[#f5f5f7] border border-[#e5e5ea] hover:border-[#ff3b30]/30 hover:bg-[#ff3b30]/5 px-3 py-1.2 rounded-full transition-all cursor-pointer"
             >
-              <LogOut size={13} />
+              <LogOut size={12} />
               <span>Sign out</span>
             </button>
           </div>
@@ -139,7 +145,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <a 
               href="/login" 
-              className="text-xs font-medium text-white bg-primary hover:bg-primary-hover focus:ring-2 focus:ring-primary-focus/50 px-4 py-1.5 rounded-md transition-all shadow-md shadow-primary/10"
+              className="text-xs font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] px-4 py-1.5 rounded-full transition-all shadow-sm"
             >
               Sign in
             </a>
@@ -150,9 +156,10 @@ export default function Navbar() {
       {/* Mobile Toggle Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)} 
-        className="md:hidden p-1.5 rounded-md bg-surface-1 border border-hairline hover:bg-surface-2 text-ink-subtle hover:text-ink transition-all cursor-pointer"
+        className="md:hidden p-1.5 rounded-lg bg-[#f5f5f7] border border-[#e5e5ea] hover:bg-[#e8e8ed] text-[#1d1d1f] transition-all cursor-pointer"
+        aria-label="Toggle navigation"
       >
-        {isOpen ? <X size={20} /> : <Menu size={20} />}
+        {isOpen ? <X size={18} /> : <Menu size={18} />}
       </button>
 
       {/* Mobile Menu Panel */}
@@ -162,22 +169,22 @@ export default function Navbar() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className="absolute top-14 left-0 w-full bg-canvas border-b border-hairline flex flex-col px-6 py-8 gap-6 md:hidden shadow-2xl shadow-black/80"
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="absolute top-12 left-0 w-full bg-white/95 backdrop-blur-2xl border-b border-[#e5e5ea] flex flex-col px-6 py-6 gap-5 md:hidden shadow-xl"
           >
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3">
               {renderNavLinks()}
             </div>
-            <hr className="border-hairline" />
+            <hr className="border-[#e5e5ea]" />
             <div className="flex flex-col gap-3">
               {user ? (
                 <>
-                  <div className="flex items-center justify-between px-3 py-2 bg-surface-1 border border-hairline rounded-md text-xs font-mono text-ink-subtle">
+                  <div className="flex items-center justify-between px-3 py-2 bg-[#f5f5f7] border border-[#e5e5ea] rounded-xl text-xs text-[#1d1d1f]">
                     <span className="flex items-center gap-1.5">
-                      <User size={13} className="text-primary" />
+                      <User size={13} className="text-[#0066cc]" />
                       {user.email}
                     </span>
-                    <span className="px-1.5 py-0.5 rounded bg-surface-2 text-[10px] uppercase font-sans font-bold">
+                    <span className="px-2 py-0.5 rounded-full bg-white text-[10px] text-[#6e6e73] border border-[#e5e5ea] uppercase font-semibold">
                       {user.role}
                     </span>
                   </div>
@@ -185,17 +192,17 @@ export default function Navbar() {
                     <a 
                       href="/student/dashboard?tab=notifications" 
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-2 text-sm text-ink-subtle hover:text-ink"
+                      className="flex items-center gap-2 text-sm text-[#1d1d1f] hover:text-[#0066cc]"
                     >
-                      <Bell size={16} />
+                      <Bell size={15} />
                       Notifications ({unreadCount} unread)
                     </a>
                   )}
                   <button 
                     onClick={() => { setIsOpen(false); handleLogout(); }} 
-                    className="flex items-center justify-center gap-2 text-sm font-medium text-red-400 bg-red-950/10 border border-red-950/30 hover:bg-red-950/20 py-2 rounded-md transition-all cursor-pointer"
+                    className="flex items-center justify-center gap-2 text-sm font-normal text-[#ff3b30] bg-[#ff3b30]/10 border border-[#ff3b30]/20 hover:bg-[#ff3b30]/15 py-2 rounded-full transition-all cursor-pointer"
                   >
-                    <LogOut size={15} />
+                    <LogOut size={14} />
                     Sign out
                   </button>
                 </>
@@ -204,7 +211,7 @@ export default function Navbar() {
                   <a 
                     href="/login" 
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center text-sm font-medium text-white bg-primary hover:bg-primary-hover py-2 rounded-md transition-all"
+                    className="flex items-center justify-center text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] py-2 rounded-full transition-all shadow-sm"
                   >
                     Sign in
                   </a>

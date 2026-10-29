@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Shield, Users, Building, Briefcase, FileText, CheckCircle, 
-  XCircle, ToggleLeft, ToggleRight, Trash2, Search, MapPin, 
-  ExternalLink, Download, FileCode, Check, RefreshCw, BarChart2, Globe
+  Shield, Users, Building, Briefcase, FileText, CheckCircle2, 
+  XCircle, Search, RefreshCw, BarChart2, Globe, ArrowUpRight,
+  Download, Clock, Check, AlertCircle, ChevronRight
 } from 'lucide-react';
 import { api, fileUrl } from '../../utils/api.js';
 import { isAuthenticated, getRole, clearSession } from '../../utils/auth.js';
@@ -47,22 +47,17 @@ export default function AdminDashboard() {
     setLoading(true);
     setApiError('');
     try {
-      // 1. Fetch Stats
       const metrics = await api.admin.getStats();
       setStats(metrics);
 
-      // 2. Fetch Students
       const studs = await api.admin.getStudents();
       setStudents(studs);
 
-      // 3. Fetch Companies
       const comps = await api.admin.getCompanies();
       setCompanies(comps);
 
-      // 4. Fetch Jobs
       const jobList = await api.admin.getJobs();
       setJobs(jobList);
-
     } catch (err) {
       console.error(err);
       setApiError(err.message || 'Failed to load administrator records.');
@@ -77,12 +72,10 @@ export default function AdminDashboard() {
       const res = await api.admin.approveCompany(companyId, decision);
       showToast(res.message);
       
-      // Update local state
       setCompanies(prev => 
         prev.map(c => c._id === companyId ? { ...c, status: decision, user: { ...c.user, isApproved: decision === 'approved' } } : c)
       );
 
-      // Refresh general metrics
       const metrics = await api.admin.getStats();
       setStats(metrics);
     } catch (err) {
@@ -92,14 +85,18 @@ export default function AdminDashboard() {
 
   if (loading && !stats) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col gap-6 animate-pulse">
-        <div className="h-10 bg-surface-1 rounded w-1/4" />
-        <div className="h-96 bg-surface-1 rounded" />
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-16 flex flex-col gap-8 animate-pulse">
+        <div className="h-8 bg-[#e5e5ea] rounded-full w-64" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="h-32 bg-white rounded-[22px] border border-[#e5e5ea]" />
+          ))}
+        </div>
+        <div className="h-96 bg-white rounded-[24px] border border-[#e5e5ea]" />
       </div>
     );
   }
 
-  // Filter lists
   const filteredStudents = students.filter(s => 
     s.fullName.toLowerCase().includes(searchStudent.toLowerCase()) ||
     s.skills.some(skill => skill.toLowerCase().includes(searchStudent.toLowerCase()))
@@ -118,135 +115,171 @@ export default function AdminDashboard() {
   const pendingCompanies = companies.filter(c => c.status === 'pending');
 
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 relative select-none">
-      {/* Toast Alert */}
-      <AnimatePresence>
-        {toast.show && (
-          <motion.div 
-            initial={{ opacity: 0, y: 50, x: '-50%' }}
-            animate={{ opacity: 1, y: 0, x: '-50%' }}
-            exit={{ opacity: 0, y: 50, x: '-50%' }}
-            className={`fixed bottom-8 left-1/2 z-50 px-5 py-3 rounded-lg border text-xs font-semibold flex items-center gap-2 shadow-2xl ${toast.type === 'success' ? 'bg-green-950/40 border-green-900/50 text-green-300' : 'bg-red-950/40 border-red-900/50 text-red-300'}`}
-          >
-            {toast.type === 'success' ? <CheckCircle size={15} /> : <XCircle size={15} />}
-            <span>{toast.message}</span>
-          </motion.div>
+    <div className="min-h-screen bg-[#f5f5f7] py-10 px-6 md:px-12 select-none">
+      <div className="max-w-7xl mx-auto flex flex-col gap-8">
+        
+        {/* Apple Floating Toast Alert */}
+        <AnimatePresence>
+          {toast.show && (
+            <motion.div 
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full bg-[#1d1d1f] text-white text-xs font-normal flex items-center gap-2.5 shadow-[0_12px_30px_rgba(0,0,0,0.2)] border border-white/10 backdrop-blur-xl"
+            >
+              {toast.type === 'success' ? (
+                <CheckCircle2 size={16} className="text-[#34c759]" />
+              ) : (
+                <XCircle size={16} className="text-[#ff3b30]" />
+              )}
+              <span>{toast.message}</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Dashboard Top Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#e5e5ea] pb-6">
+          <div>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-[#e5e5ea] rounded-full text-[11px] font-medium text-[#0066cc] mb-2 shadow-xs">
+              <Shield size={12} />
+              <span>Placement Cell Administration</span>
+            </div>
+            <h1 className="text-3xl font-semibold tracking-[-0.02em] text-[#1d1d1f]">
+              Control Center
+            </h1>
+            <p className="text-xs text-[#86868b] mt-1">
+              Supervise student verification, recruiter approvals, and recruitment cycles
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={fetchAdminData}
+              className="flex items-center gap-2 px-4 py-2 bg-white border border-[#d2d2d7] hover:border-[#86868b] rounded-full text-xs font-medium text-[#1d1d1f] transition-all shadow-xs cursor-pointer active:scale-95"
+              title="Refresh Data"
+            >
+              <RefreshCw size={13} className="text-[#6e6e73]" />
+              <span>Refresh Records</span>
+            </button>
+          </div>
+        </div>
+
+        {apiError && (
+          <div className="p-4 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-2xl text-xs text-[#ff3b30] flex items-center gap-2">
+            <AlertCircle size={15} />
+            <span>{apiError}</span>
+          </div>
         )}
-      </AnimatePresence>
 
-      {/* Main Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-hairline pb-6 mb-8">
-        <div>
-          <h1 className="text-xl font-bold tracking-tight text-ink flex items-center gap-2">
-            <Shield className="text-primary" size={20} />
-            <span>Placement Cell Administrator Dashboard</span>
-          </h1>
-          <p className="text-xs text-ink-subtle mt-1 font-mono">Control Desk • Vercel style interface</p>
+        {/* Apple Segmented Tab Switcher */}
+        <div className="flex items-center gap-1.5 p-1.5 bg-white border border-[#e5e5ea] rounded-full overflow-x-auto shadow-xs w-full max-w-4xl">
+          {[
+            { id: 'overview', name: 'Overview', icon: BarChart2 },
+            { id: 'approvals', name: 'Approvals Queue', count: pendingCompanies.length, icon: CheckCircle2 },
+            { id: 'students', name: 'Student Registry', icon: Users },
+            { id: 'companies', name: 'Recruiters Directory', icon: Building },
+            { id: 'jobs', name: 'Placements Registry', icon: Briefcase }
+          ].map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex-1 min-w-[130px] flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium rounded-full cursor-pointer transition-all duration-200 ${
+                  isActive 
+                    ? 'bg-[#0066cc] text-white shadow-xs' 
+                    : 'text-[#6e6e73] hover:text-[#1d1d1f] hover:bg-[#f5f5f7]'
+                }`}
+              >
+                <tab.icon size={14} />
+                <span>{tab.name}</span>
+                {tab.count !== undefined && tab.count > 0 && (
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
+                    isActive ? 'bg-white/20 text-white' : 'bg-[#ff9500]/15 text-[#ff9500]'
+                  }`}>
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
-        <div className="flex items-center gap-3">
-          <button 
-            onClick={fetchAdminData}
-            className="p-2 bg-surface-1 border border-hairline rounded hover:bg-surface-2 text-ink-subtle hover:text-ink transition-all cursor-pointer"
-            title="Refresh Data"
-          >
-            <RefreshCw size={15} />
-          </button>
-        </div>
-      </div>
 
-      {apiError && (
-        <div className="mb-6 p-4 bg-red-950/20 border border-red-950/50 rounded-lg text-xs text-red-400">
-          {apiError}
-        </div>
-      )}
-
-      {/* Tab Select Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-5 p-1 bg-surface-1 border border-hairline rounded-lg mb-8 gap-1">
-        {[
-          { id: 'overview', name: 'Overview', icon: BarChart2 },
-          { id: 'approvals', name: 'Approvals Queue', count: pendingCompanies.length, icon: CheckCircle },
-          { id: 'students', name: 'Students Register', icon: Users },
-          { id: 'companies', name: 'Companies Directory', icon: Building },
-          { id: 'jobs', name: 'Placements Registry', icon: Briefcase }
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded cursor-pointer transition-all ${activeTab === tab.id ? 'bg-canvas border border-hairline text-ink' : 'text-ink-subtle hover:text-ink hover:bg-canvas/30'}`}
-          >
-            <tab.icon size={14} />
-            <span>{tab.name}</span>
-            {tab.count !== undefined && tab.count > 0 && (
-              <span className="px-1.5 py-0.5 rounded-full bg-primary/20 text-primary text-[9px] font-bold">
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Panels content */}
-      <div className="min-h-[50vh]">
+        {/* Panels Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.15 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.2 }}
           >
             
-            {/* TAB 1: OVERVIEW METRICS & CHARTS */}
+            {/* TAB 1: OVERVIEW METRICS */}
             {activeTab === 'overview' && stats && (
               <div className="flex flex-col gap-8">
-                {/* Metric Summary Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* 4 Apple Cards Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {[
-                    { label: 'Total Enrolled Students', value: stats.summary?.totalStudents, icon: Users },
-                    { label: 'Corporate Recruiters', value: stats.summary?.totalCompanies, icon: Building },
-                    { label: 'Active Placement Posts', value: stats.summary?.totalJobs, icon: Briefcase },
-                    { label: 'Candidate Applications', value: stats.summary?.totalApplications, icon: FileText }
+                    { label: 'Total Enrolled Students', value: stats.summary?.totalStudents || 0, icon: Users, color: '#0066cc' },
+                    { label: 'Corporate Recruiters', value: stats.summary?.totalCompanies || 0, icon: Building, color: '#5856d6' },
+                    { label: 'Active Placement Posts', value: stats.summary?.totalJobs || 0, icon: Briefcase, color: '#34c759' },
+                    { label: 'Candidate Applications', value: stats.summary?.totalApplications || 0, icon: FileText, color: '#ff9500' }
                   ].map((metric, i) => (
-                    <div key={i} className="bg-surface-1 border border-hairline rounded-lg p-5 flex items-start justify-between">
-                      <div>
-                        <span className="text-[10px] text-ink-subtle uppercase font-semibold">{metric.label}</span>
-                        <div className="text-2xl font-bold text-ink mt-2 font-mono">{metric.value}</div>
+                    <div 
+                      key={i} 
+                      className="bg-white border border-[#e5e5ea] rounded-[22px] p-6 flex flex-col justify-between shadow-xs hover:shadow-sm transition-all"
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="text-xs font-medium text-[#86868b]">{metric.label}</span>
+                        <div 
+                          className="w-9 h-9 rounded-full flex items-center justify-center shrink-0"
+                          style={{ backgroundColor: `${metric.color}15`, color: metric.color }}
+                        >
+                          <metric.icon size={17} />
+                        </div>
                       </div>
-                      <div className="p-2 bg-surface-2 rounded-md border border-hairline-strong text-primary shrink-0">
-                        <metric.icon size={16} />
+                      <div className="text-3xl font-semibold tracking-tight text-[#1d1d1f]">
+                        {metric.value}
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Application breakdown charts (Vercel minimal progress bars) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Status Chart */}
-                  <div className="bg-surface-1 border border-hairline rounded-lg p-6">
-                    <h3 className="text-xs font-bold text-ink mb-6 uppercase tracking-wider text-ink-subtle">Applications Funnel Stage</h3>
+                {/* Progress bars & statistics breakdown */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Status Funnel */}
+                  <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs">
+                    <h3 className="text-sm font-semibold text-[#1d1d1f] mb-6 flex items-center justify-between">
+                      <span>Applications Funnel</span>
+                      <span className="text-xs text-[#86868b] font-normal">Active Candidates</span>
+                    </h3>
                     <div className="flex flex-col gap-4 text-xs">
                       {Object.entries(stats.applicationStatus || {}).map(([status, count]) => {
                         const total = stats.summary?.totalApplications || 1;
                         const percentage = ((count / total) * 100).toFixed(0);
                         
-                        const progressColors = {
-                          pending: 'bg-yellow-500',
-                          reviewed: 'bg-blue-500',
-                          shortlisted: 'bg-purple-500',
-                          accepted: 'bg-green-500',
-                          rejected: 'bg-red-500'
+                        const colorMap = {
+                          pending: '#ff9500',
+                          reviewed: '#0066cc',
+                          shortlisted: '#5856d6',
+                          accepted: '#34c759',
+                          rejected: '#ff3b30'
                         };
 
                         return (
                           <div key={status} className="flex flex-col gap-1.5">
-                            <div className="flex items-center justify-between text-ink-subtle">
-                              <span className="capitalize font-mono">{status}</span>
-                              <span className="font-semibold text-ink">{count} ({percentage}%)</span>
+                            <div className="flex items-center justify-between text-[#6e6e73]">
+                              <span className="capitalize font-medium text-[#1d1d1f]">{status}</span>
+                              <span>{count} ({percentage}%)</span>
                             </div>
-                            <div className="w-full h-2 bg-surface-2 border border-hairline rounded-full overflow-hidden">
+                            <div className="w-full h-2 bg-[#f5f5f7] rounded-full overflow-hidden">
                               <div 
-                                className={`h-full rounded-full ${progressColors[status] || 'bg-primary'}`} 
-                                style={{ width: `${percentage}%` }}
+                                className="h-full rounded-full transition-all duration-500" 
+                                style={{ 
+                                  width: `${percentage}%`,
+                                  backgroundColor: colorMap[status] || '#0066cc'
+                                }}
                               />
                             </div>
                           </div>
@@ -255,30 +288,36 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  {/* Job Type breakdown Chart */}
-                  <div className="bg-surface-1 border border-hairline rounded-lg p-6">
-                    <h3 className="text-xs font-bold text-ink mb-6 uppercase tracking-wider text-ink-subtle">Placements Vacancies Segment</h3>
+                  {/* Job Segment Breakdown */}
+                  <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs">
+                    <h3 className="text-sm font-semibold text-[#1d1d1f] mb-6 flex items-center justify-between">
+                      <span>Placement Segments</span>
+                      <span className="text-xs text-[#86868b] font-normal">By Opportunity Type</span>
+                    </h3>
                     <div className="flex flex-col gap-4 text-xs">
                       {Object.entries(stats.jobTypes || {}).map(([type, count]) => {
                         const total = stats.summary?.totalJobs || 1;
                         const percentage = ((count / total) * 100).toFixed(0);
                         
-                        const progressColors = {
-                          'full-time': 'bg-primary',
-                          'part-time': 'bg-cyan-500',
-                          'internship': 'bg-success-green'
+                        const typeColors = {
+                          'full-time': '#0066cc',
+                          'part-time': '#5856d6',
+                          'internship': '#34c759'
                         };
 
                         return (
                           <div key={type} className="flex flex-col gap-1.5">
-                            <div className="flex items-center justify-between text-ink-subtle">
-                              <span className="capitalize font-mono">{type}</span>
-                              <span className="font-semibold text-ink">{count} ({percentage}%)</span>
+                            <div className="flex items-center justify-between text-[#6e6e73]">
+                              <span className="capitalize font-medium text-[#1d1d1f]">{type}</span>
+                              <span>{count} ({percentage}%)</span>
                             </div>
-                            <div className="w-full h-2 bg-surface-2 border border-hairline rounded-full overflow-hidden">
+                            <div className="w-full h-2 bg-[#f5f5f7] rounded-full overflow-hidden">
                               <div 
-                                className={`h-full rounded-full ${progressColors[type] || 'bg-primary'}`} 
-                                style={{ width: `${percentage}%` }}
+                                className="h-full rounded-full transition-all duration-500" 
+                                style={{ 
+                                  width: `${percentage}%`,
+                                  backgroundColor: typeColors[type] || '#0066cc'
+                                }}
                               />
                             </div>
                           </div>
@@ -288,73 +327,83 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* Recent Application logs table */}
-                <div className="bg-surface-1 border border-hairline rounded-lg p-6 overflow-x-auto">
-                  <h3 className="text-xs font-bold text-ink mb-4 uppercase tracking-wider text-ink-subtle">Recent Activity Log</h3>
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="border-b border-hairline text-ink-subtle font-mono">
-                        <th className="pb-2.5">Candidate</th>
-                        <th className="pb-2.5">Opening / Recruiter</th>
-                        <th className="pb-2.5">Applied Date</th>
-                        <th className="pb-2.5 text-right">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {stats.recentActivity?.map(act => (
-                        <tr key={act._id} className="border-b border-hairline last:border-b-0 hover:bg-canvas/30">
-                          <td className="py-3 font-semibold text-ink">{act.student?.fullName || 'Demo Student'}</td>
-                          <td className="py-3 text-ink-subtle">
-                            {act.job?.title}
-                          </td>
-                          <td className="py-3 text-ink-tertiary font-mono">{new Date(act.appliedAt).toLocaleDateString()}</td>
-                          <td className="py-3 text-right">
-                            <span className="px-2 py-0.5 rounded bg-surface-2 border border-hairline text-[9px] uppercase font-mono tracking-wider font-bold">
-                              {act.status}
-                            </span>
-                          </td>
+                {/* Recent Activity Table */}
+                <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs overflow-hidden">
+                  <h3 className="text-sm font-semibold text-[#1d1d1f] mb-5">
+                    Recent Recruitment Activity
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-[#e5e5ea] text-[#86868b]">
+                          <th className="pb-3 font-medium">Candidate</th>
+                          <th className="pb-3 font-medium">Opening / Company</th>
+                          <th className="pb-3 font-medium">Applied Date</th>
+                          <th className="pb-3 font-medium text-right">Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-[#f5f5f7]">
+                        {stats.recentActivity?.map(act => (
+                          <tr key={act._id} className="hover:bg-[#f5f5f7]/60 transition-colors">
+                            <td className="py-3.5 font-medium text-[#1d1d1f]">{act.student?.fullName || 'Candidate'}</td>
+                            <td className="py-3.5 text-[#6e6e73]">
+                              {act.job?.title}
+                            </td>
+                            <td className="py-3.5 text-[#86868b]">{new Date(act.appliedAt).toLocaleDateString()}</td>
+                            <td className="py-3.5 text-right">
+                              <span className="inline-block px-3 py-1 rounded-full text-[10px] font-semibold bg-[#f5f5f7] text-[#1d1d1f] border border-[#e5e5ea] capitalize">
+                                {act.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* TAB 2: RECRUITER VERIFICATION QUEUE */}
+            {/* TAB 2: RECRUITER APPROVALS QUEUE */}
             {activeTab === 'approvals' && (
-              <div className="bg-surface-1 border border-hairline rounded-lg p-6">
-                <h2 className="text-sm font-semibold text-ink mb-6 flex items-center gap-1.5 border-b border-hairline pb-3">
-                  <CheckCircle size={16} className="text-primary" />
-                  <span>Pending Recruiter Verification Queue</span>
-                </h2>
+              <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs">
+                <div className="border-b border-[#e5e5ea] pb-4 mb-6">
+                  <h2 className="text-base font-semibold text-[#1d1d1f] flex items-center gap-2">
+                    <CheckCircle2 size={18} className="text-[#0066cc]" />
+                    <span>Recruiter Verification Queue</span>
+                  </h2>
+                  <p className="text-xs text-[#86868b] mt-1">Review newly registered recruiters before granting job posting authorization</p>
+                </div>
 
                 {pendingCompanies.length === 0 ? (
-                  <div className="text-center py-10">
-                    <CheckCircle size={32} className="text-success-green/20 mx-auto mb-2" />
-                    <p className="text-xs text-ink-subtle">All recruiter applications are verified. Approvals queue is empty.</p>
+                  <div className="text-center py-16">
+                    <div className="w-12 h-12 rounded-full bg-[#34c759]/10 text-[#34c759] flex items-center justify-center mx-auto mb-3">
+                      <Check size={22} />
+                    </div>
+                    <h3 className="text-sm font-semibold text-[#1d1d1f]">Queue is empty</h3>
+                    <p className="text-xs text-[#86868b] mt-1">All recruiter profiles have been verified.</p>
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4">
                     {pendingCompanies.map(comp => (
-                      <div key={comp._id} className="border border-hairline p-4 rounded-lg bg-canvas flex flex-col md:flex-row justify-between gap-6 text-xs text-left">
+                      <div key={comp._id} className="border border-[#e5e5ea] p-5 rounded-[20px] bg-[#f5f5f7]/50 flex flex-col md:flex-row justify-between gap-5 text-xs text-left">
                         <div className="flex-grow">
-                          <h3 className="text-xs font-bold text-ink flex items-center gap-2">
-                            <span>{comp.companyName}</span>
-                            <span className="px-1.5 py-0.5 rounded bg-yellow-950/20 text-yellow-400 border border-yellow-900/30 text-[9px] uppercase font-mono">
+                          <div className="flex items-center gap-2.5">
+                            <h3 className="text-sm font-semibold text-[#1d1d1f]">{comp.companyName}</h3>
+                            <span className="px-2.5 py-0.5 rounded-full bg-[#ff9500]/15 text-[#ff9500] text-[10px] font-medium border border-[#ff9500]/20">
                               Pending Review
                             </span>
-                          </h3>
-                          <div className="flex items-center gap-3 text-[10px] text-ink-subtle mt-1 font-mono">
-                            <span>Sector: {comp.industry}</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs text-[#6e6e73] mt-1.5">
+                            <span>Sector: <strong className="text-[#1d1d1f] font-medium">{comp.industry}</strong></span>
                             {comp.website && (
-                              <a href={comp.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-0.5 hover:text-primary hover:underline">
-                                <Globe size={11} />
-                                <span>{comp.website.replace('https://', '')}</span>
+                              <a href={comp.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[#0066cc] hover:underline">
+                                <Globe size={12} />
+                                <span>{comp.website.replace(/^https?:\/\//, '')}</span>
                               </a>
                             )}
                           </div>
-                          <p className="text-[10px] text-ink-subtle mt-3 max-w-xl leading-relaxed">
+                          <p className="text-xs text-[#6e6e73] mt-3 max-w-2xl leading-relaxed">
                             {comp.description}
                           </p>
                         </div>
@@ -362,13 +411,13 @@ export default function AdminDashboard() {
                         <div className="shrink-0 flex items-center gap-2 self-end md:self-center">
                           <button 
                             onClick={() => handleApproveCompany(comp._id, 'approved')}
-                            className="px-3.5 py-1.5 bg-green-950/20 border border-green-900/40 hover:bg-green-950/30 text-green-300 rounded font-semibold transition-colors cursor-pointer"
+                            className="px-4 py-2 bg-[#34c759] hover:bg-[#30b753] text-white rounded-full font-medium text-xs transition-all active:scale-95 shadow-xs cursor-pointer"
                           >
                             Approve Access
                           </button>
                           <button 
                             onClick={() => handleApproveCompany(comp._id, 'rejected')}
-                            className="px-3.5 py-1.5 bg-red-950/20 border border-red-900/40 hover:bg-red-950/30 text-red-300 rounded font-semibold transition-colors cursor-pointer"
+                            className="px-4 py-2 bg-white border border-[#d2d2d7] hover:bg-[#ff3b30]/10 hover:border-[#ff3b30]/30 hover:text-[#ff3b30] text-[#1d1d1f] rounded-full font-medium text-xs transition-all active:scale-95 cursor-pointer"
                           >
                             Reject
                           </button>
@@ -380,22 +429,25 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB 3: STUDENTS DIRECTORY REGISTER */}
+            {/* TAB 3: STUDENTS DIRECTORY */}
             {activeTab === 'students' && (
-              <div className="bg-surface-1 border border-hairline rounded-lg p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-hairline pb-4 mb-6 gap-4">
-                  <h2 className="text-sm font-semibold text-ink flex items-center gap-1.5">
-                    <Users size={16} className="text-primary" />
-                    <span>Registered Student Directory</span>
-                  </h2>
+              <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs">
+                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#e5e5ea] pb-5 mb-6 gap-4">
+                  <div>
+                    <h2 className="text-base font-semibold text-[#1d1d1f] flex items-center gap-2">
+                      <Users size={18} className="text-[#0066cc]" />
+                      <span>Student Roster</span>
+                    </h2>
+                    <p className="text-xs text-[#86868b] mt-0.5">{filteredStudents.length} candidate profiles registered</p>
+                  </div>
                   <div className="relative w-full max-w-[280px]">
-                    <Search className="absolute left-3 top-2 text-ink-subtle" size={14} />
+                    <Search className="absolute left-3.5 top-2.5 text-[#86868b]" size={14} />
                     <input 
                       type="text"
                       value={searchStudent}
                       onChange={(e) => setSearchStudent(e.target.value)}
                       placeholder="Filter by name or skills..."
-                      className="w-full bg-surface-2 border border-hairline focus:outline-none rounded pl-8 pr-3 py-1.5 text-[11px] text-ink"
+                      className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none rounded-full pl-9 pr-4 py-2 text-xs text-[#1d1d1f] transition-all"
                     />
                   </div>
                 </div>
@@ -403,29 +455,34 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="border-b border-hairline text-ink-subtle font-mono">
-                        <th className="pb-3">Student Name</th>
-                        <th className="pb-3">Email Address</th>
-                        <th className="pb-3">Phone</th>
-                        <th className="pb-3">Academic Score</th>
-                        <th className="pb-3 text-right">Resume</th>
+                      <tr className="border-b border-[#e5e5ea] text-[#86868b]">
+                        <th className="pb-3 font-medium">Student Name</th>
+                        <th className="pb-3 font-medium">Email</th>
+                        <th className="pb-3 font-medium">Phone</th>
+                        <th className="pb-3 font-medium">Academic CGPA</th>
+                        <th className="pb-3 font-medium text-right">Resume</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-[#f5f5f7]">
                       {filteredStudents.map(stud => (
-                        <tr key={stud._id} className="border-b border-hairline last:border-b-0 hover:bg-canvas/30">
-                          <td className="py-3 font-semibold text-ink">{stud.fullName}</td>
-                          <td className="py-3 text-ink-subtle">{stud.user?.email || 'N/A'}</td>
-                          <td className="py-3 text-ink-subtle font-mono">{stud.phone || 'N/A'}</td>
-                          <td className="py-3 text-ink font-mono">{stud.cgpa ? `${stud.cgpa} CGPA` : '0.00'}</td>
-                          <td className="py-3 text-right">
+                        <tr key={stud._id} className="hover:bg-[#f5f5f7]/60 transition-colors">
+                          <td className="py-3.5 font-medium text-[#1d1d1f]">{stud.fullName}</td>
+                          <td className="py-3.5 text-[#6e6e73]">{stud.user?.email || 'N/A'}</td>
+                          <td className="py-3.5 text-[#6e6e73]">{stud.phone || 'N/A'}</td>
+                          <td className="py-3.5 text-[#1d1d1f] font-medium">{stud.cgpa ? `${stud.cgpa} CGPA` : '—'}</td>
+                          <td className="py-3.5 text-right">
                             {stud.resumeUrl ? (
-                              <a href={fileUrl(stud.resumeUrl)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline font-semibold">
-                                <Download size={11} />
+                              <a 
+                                href={fileUrl(stud.resumeUrl)} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0066cc]/10 hover:bg-[#0066cc]/15 text-[#0066cc] rounded-full text-[11px] font-medium transition-colors"
+                              >
+                                <Download size={12} />
                                 <span>PDF</span>
                               </a>
                             ) : (
-                              <span className="text-[10px] text-ink-tertiary">None</span>
+                              <span className="text-[11px] text-[#86868b]">No file</span>
                             )}
                           </td>
                         </tr>
@@ -436,22 +493,25 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB 4: COMPANIES REGISTER DIRECTORY */}
+            {/* TAB 4: COMPANIES DIRECTORY */}
             {activeTab === 'companies' && (
-              <div className="bg-surface-1 border border-hairline rounded-lg p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-hairline pb-4 mb-6 gap-4">
-                  <h2 className="text-sm font-semibold text-ink flex items-center gap-1.5">
-                    <Building size={16} className="text-primary" />
-                    <span>Hiring Corporate Directory</span>
-                  </h2>
+              <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs">
+                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#e5e5ea] pb-5 mb-6 gap-4">
+                  <div>
+                    <h2 className="text-base font-semibold text-[#1d1d1f] flex items-center gap-2">
+                      <Building size={18} className="text-[#0066cc]" />
+                      <span>Corporate Partners</span>
+                    </h2>
+                    <p className="text-xs text-[#86868b] mt-0.5">{filteredCompanies.length} enterprise recruiters in database</p>
+                  </div>
                   <div className="relative w-full max-w-[280px]">
-                    <Search className="absolute left-3 top-2 text-ink-subtle" size={14} />
+                    <Search className="absolute left-3.5 top-2.5 text-[#86868b]" size={14} />
                     <input 
                       type="text"
                       value={searchCompany}
                       onChange={(e) => setSearchCompany(e.target.value)}
                       placeholder="Filter by name or industry..."
-                      className="w-full bg-surface-2 border border-hairline focus:outline-none rounded pl-8 pr-3 py-1.5 text-[11px] text-ink"
+                      className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none rounded-full pl-9 pr-4 py-2 text-xs text-[#1d1d1f] transition-all"
                     />
                   </div>
                 </div>
@@ -459,39 +519,45 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="border-b border-hairline text-ink-subtle font-mono">
-                        <th className="pb-3">Company Name</th>
-                        <th className="pb-3">Industry Segment</th>
-                        <th className="pb-3">Email Contact</th>
-                        <th className="pb-3">Status</th>
-                        <th className="pb-3 text-right">Action</th>
+                      <tr className="border-b border-[#e5e5ea] text-[#86868b]">
+                        <th className="pb-3 font-medium">Company Name</th>
+                        <th className="pb-3 font-medium">Industry</th>
+                        <th className="pb-3 font-medium">Contact Email</th>
+                        <th className="pb-3 font-medium">Status</th>
+                        <th className="pb-3 font-medium text-right">Access</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-[#f5f5f7]">
                       {filteredCompanies.map(comp => (
-                        <tr key={comp._id} className="border-b border-hairline last:border-b-0 hover:bg-canvas/30">
-                          <td className="py-3 font-semibold text-ink">{comp.companyName}</td>
-                          <td className="py-3 text-ink-subtle">{comp.industry}</td>
-                          <td className="py-3 text-ink-subtle font-mono">{comp.user?.email || 'N/A'}</td>
-                          <td className="py-3">
-                            <span className={`px-2 py-0.5 rounded text-[9px] uppercase font-mono font-bold border ${comp.status === 'approved' ? 'bg-green-500/20 text-green-400 border-green-500/30' : comp.status === 'rejected' ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'}`}>
+                        <tr key={comp._id} className="hover:bg-[#f5f5f7]/60 transition-colors">
+                          <td className="py-3.5 font-medium text-[#1d1d1f]">{comp.companyName}</td>
+                          <td className="py-3.5 text-[#6e6e73]">{comp.industry}</td>
+                          <td className="py-3.5 text-[#6e6e73]">{comp.user?.email || 'N/A'}</td>
+                          <td className="py-3.5">
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                              comp.status === 'approved' 
+                                ? 'bg-[#34c759]/10 text-[#34c759] border-[#34c759]/20' 
+                                : comp.status === 'rejected' 
+                                ? 'bg-[#ff3b30]/10 text-[#ff3b30] border-[#ff3b30]/20' 
+                                : 'bg-[#ff9500]/10 text-[#ff9500] border-[#ff9500]/20'
+                            }`}>
                               {comp.status}
                             </span>
                           </td>
-                          <td className="py-3 text-right">
+                          <td className="py-3.5 text-right">
                             {comp.status === 'pending' ? (
                               <button 
                                 onClick={() => handleApproveCompany(comp._id, 'approved')}
-                                className="text-[10px] text-primary font-semibold hover:underline cursor-pointer"
+                                className="text-xs text-[#0066cc] font-medium hover:underline cursor-pointer"
                               >
                                 Approve
                               </button>
                             ) : (
                               <button 
                                 onClick={() => handleApproveCompany(comp._id, comp.status === 'approved' ? 'rejected' : 'approved')}
-                                className="text-[10px] text-ink-subtle hover:text-ink font-semibold cursor-pointer"
+                                className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] font-medium cursor-pointer"
                               >
-                                Toggle Access
+                                {comp.status === 'approved' ? 'Revoke Access' : 'Restore Access'}
                               </button>
                             )}
                           </td>
@@ -503,22 +569,25 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* TAB 5: PLACEMENTS REGISTRY (ALL JOBS) */}
+            {/* TAB 5: JOBS REGISTRY */}
             {activeTab === 'jobs' && (
-              <div className="bg-surface-1 border border-hairline rounded-lg p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-hairline pb-4 mb-6 gap-4">
-                  <h2 className="text-sm font-semibold text-ink flex items-center gap-1.5">
-                    <Briefcase size={16} className="text-primary" />
-                    <span>Job Postings System Registry</span>
-                  </h2>
+              <div className="bg-white border border-[#e5e5ea] rounded-[24px] p-7 shadow-xs">
+                <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[#e5e5ea] pb-5 mb-6 gap-4">
+                  <div>
+                    <h2 className="text-base font-semibold text-[#1d1d1f] flex items-center gap-2">
+                      <Briefcase size={18} className="text-[#0066cc]" />
+                      <span>Placements Registry</span>
+                    </h2>
+                    <p className="text-xs text-[#86868b] mt-0.5">{filteredJobs.length} active opportunities listed</p>
+                  </div>
                   <div className="relative w-full max-w-[280px]">
-                    <Search className="absolute left-3 top-2 text-ink-subtle" size={14} />
+                    <Search className="absolute left-3.5 top-2.5 text-[#86868b]" size={14} />
                     <input 
                       type="text"
                       value={searchJob}
                       onChange={(e) => setSearchJob(e.target.value)}
-                      placeholder="Filter by job title or company..."
-                      className="w-full bg-surface-2 border border-hairline focus:outline-none rounded pl-8 pr-3 py-1.5 text-[11px] text-ink"
+                      placeholder="Filter by title or company..."
+                      className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none rounded-full pl-9 pr-4 py-2 text-xs text-[#1d1d1f] transition-all"
                     />
                   </div>
                 </div>
@@ -526,23 +595,27 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="border-b border-hairline text-ink-subtle font-mono">
-                        <th className="pb-3">Listing Title</th>
-                        <th className="pb-3">Posted Recruiter</th>
-                        <th className="pb-3">Location</th>
-                        <th className="pb-3">Type</th>
-                        <th className="pb-3 text-right">Status</th>
+                      <tr className="border-b border-[#e5e5ea] text-[#86868b]">
+                        <th className="pb-3 font-medium">Opening Title</th>
+                        <th className="pb-3 font-medium">Hiring Recruiter</th>
+                        <th className="pb-3 font-medium">Location</th>
+                        <th className="pb-3 font-medium">Opportunity Type</th>
+                        <th className="pb-3 font-medium text-right">Status</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-[#f5f5f7]">
                       {filteredJobs.map(job => (
-                        <tr key={job._id} className="border-b border-hairline last:border-b-0 hover:bg-canvas/30">
-                          <td className="py-3 font-semibold text-ink">{job.title}</td>
-                          <td className="py-3 text-ink-subtle">{job.company?.companyName || 'N/A'}</td>
-                          <td className="py-3 text-ink-subtle font-mono">{job.location}</td>
-                          <td className="py-3 capitalize font-semibold text-primary">{job.type}</td>
-                          <td className="py-3 text-right">
-                            <span className={`px-2 py-0.5 rounded text-[9px] uppercase font-mono font-bold border ${job.status === 'active' ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
+                        <tr key={job._id} className="hover:bg-[#f5f5f7]/60 transition-colors">
+                          <td className="py-3.5 font-medium text-[#1d1d1f]">{job.title}</td>
+                          <td className="py-3.5 text-[#6e6e73]">{job.company?.companyName || 'N/A'}</td>
+                          <td className="py-3.5 text-[#6e6e73]">{job.location}</td>
+                          <td className="py-3.5 capitalize font-medium text-[#0066cc]">{job.type}</td>
+                          <td className="py-3.5 text-right">
+                            <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border ${
+                              job.status === 'active' 
+                                ? 'bg-[#34c759]/10 text-[#34c759] border-[#34c759]/20' 
+                                : 'bg-[#ff3b30]/10 text-[#ff3b30] border-[#ff3b30]/20'
+                            }`}>
                               {job.status}
                             </span>
                           </td>

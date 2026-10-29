@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Briefcase, ShieldCheck, Zap, Sparkles, LineChart, 
-  HelpCircle, ChevronDown, Send, ArrowRight, Star 
+  HelpCircle, ChevronDown, Send, ArrowRight, Star, Check 
 } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="w-full bg-canvas overflow-hidden">
+    <div className="w-full bg-[#f5f5f7] overflow-hidden text-[#1d1d1f]">
       <HeroSection />
       <RecruitersMarquee />
       <FeaturesSection />
@@ -18,34 +18,31 @@ export default function LandingPage() {
   );
 }
 
-// 1. Aceternity UI style Hero Section with Mock Dashboard Preview
+// 1. Apple-style Hero Section with macOS Window Preview
 function HeroSection() {
   return (
-    <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 pt-20 pb-16 text-center z-10">
-      {/* Background soft lavender glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none -z-10" />
-
+    <section className="relative min-h-[90vh] flex flex-col items-center justify-center px-6 pt-16 pb-20 text-center bg-white border-b border-[#e5e5ea]">
       {/* Eyebrow badge */}
       <motion.div 
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center gap-1.5 px-3 py-1 bg-surface-1 border border-hairline rounded-full text-xs font-medium text-ink-subtle mb-6 tracking-wide"
+        className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#f5f5f7] border border-[#e5e5ea] rounded-full text-xs font-normal text-[#1d1d1f] mb-6 shadow-sm"
       >
-        <Sparkles size={12} className="text-primary" />
-        <span>University Placement Cycle 2026 is Live</span>
+        <span className="w-2 h-2 rounded-full bg-[#34c759] animate-pulse" />
+        <span className="text-[#6e6e73]">University Placement Cycle 2026 is Live</span>
       </motion.div>
 
-      {/* Main Title */}
+      {/* Main Title - Apple SF Pro Display aesthetic with negative tracking */}
       <motion.h1 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="max-w-4xl text-4xl md:text-7xl font-bold tracking-tight text-ink leading-[1.1] mb-6 text-glow"
+        className="max-w-4xl text-4xl sm:text-6xl md:text-7xl font-semibold tracking-[-0.03em] text-[#1d1d1f] leading-[1.08] mb-6"
       >
         Where Student Talent <br />
-        <span className="bg-gradient-to-r from-primary via-primary-hover to-white bg-clip-text text-transparent">
-          Connects with Enterprise
+        <span className="text-[#0066cc]">
+          Connects with Enterprise.
         </span>
       </motion.h1>
 
@@ -54,112 +51,115 @@ function HeroSection() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="max-w-2xl text-base md:text-lg text-ink-muted mb-10 leading-relaxed font-sans"
+        className="max-w-2xl text-base sm:text-lg text-[#6e6e73] mb-10 leading-relaxed font-normal"
       >
-        CampusConnect streamlines college recruitment. Upload your profile, track applications in real-time, and get guidance from our AI Placement Assistant.
+        CampusConnect streamlines college recruitment. Build your profile, track applications in real-time, and get guidance from our AI Placement Assistant.
       </motion.p>
 
-      {/* Actions */}
+      {/* Apple Dual Pill CTA Actions */}
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="flex flex-col sm:flex-row items-center gap-4 mb-16"
+        className="flex flex-col sm:flex-row items-center gap-3.5 mb-16"
       >
         <a 
           href="/student" 
-          className="w-full sm:w-auto flex items-center justify-center gap-1.5 text-sm font-medium text-white bg-primary hover:bg-primary-hover px-6 py-3 rounded-md transition-all duration-150 shadow-lg shadow-primary/20 cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] px-7 py-3 rounded-full transition-all duration-200 shadow-sm hover:shadow hover:scale-[1.01] cursor-pointer"
         >
           <span>Student Portal</span>
           <ArrowRight size={15} />
         </a>
         <a 
           href="/company" 
-          className="w-full sm:w-auto text-sm font-medium text-ink bg-surface-1 border border-hairline hover:bg-surface-2 hover:border-hairline-strong px-6 py-3 rounded-md transition-all duration-150 cursor-pointer"
+          className="w-full sm:w-auto text-sm font-normal text-[#0066cc] bg-[#f5f5f7] border border-[#d2d2d7] hover:bg-[#e8e8ed] px-7 py-3 rounded-full transition-all duration-200 cursor-pointer"
         >
           Recruiter Portal
         </a>
       </motion.div>
 
-      {/* Product Dashboard Preview (Canonical Linear Screenshot style) */}
+      {/* Product Dashboard Preview (Apple macOS Window Chrome) */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.7, delay: 0.4 }}
-        className="w-full max-w-5xl bg-surface-1 border border-hairline rounded-xl p-4 shadow-2xl shadow-black"
+        className="w-full max-w-5xl bg-[#f5f5f7] border border-[#d2d2d7] rounded-[22px] p-2.5 sm:p-3 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.12)] text-left"
       >
-        <div className="w-full rounded-lg bg-canvas border border-hairline overflow-hidden select-none">
-          {/* Mock Dashboard Top Chrome Header */}
-          <div className="w-full h-9 bg-surface-2 border-b border-hairline flex items-center px-4 justify-between">
+        <div className="w-full rounded-[18px] bg-white border border-[#e5e5ea] overflow-hidden select-none shadow-sm">
+          {/* macOS Top Chrome Header */}
+          <div className="w-full h-10 bg-[#fbfbfd] border-b border-[#e5e5ea] flex items-center px-4 justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500/40" />
-              <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/40" />
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500/40" />
+              <span className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]" />
+              <span className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]" />
+              <span className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]" />
             </div>
-            <div className="text-[10px] font-mono text-ink-tertiary">campusconnect.edu/student/dashboard</div>
-            <div className="w-4 h-4" />
+            <div className="text-[11px] font-normal text-[#86868b] bg-[#f5f5f7] px-4 py-1 rounded-full border border-[#e5e5ea]">
+              campusconnect.edu/student/dashboard
+            </div>
+            <div className="w-8" />
           </div>
           
           {/* Mock Dashboard Layout */}
-          <div className="w-full p-6 text-left grid grid-cols-1 md:grid-cols-4 gap-6 bg-surface-1/40">
+          <div className="w-full p-6 text-left grid grid-cols-1 md:grid-cols-4 gap-6 bg-[#fbfbfd]">
             {/* Sidebar */}
-            <div className="hidden md:flex flex-col gap-4 border-r border-hairline pr-6">
-              <div className="flex items-center gap-2 px-2 py-1 bg-surface-2/60 border border-hairline rounded text-[11px] font-mono text-ink-subtle">
-                <div className="w-2 h-2 rounded-full bg-success-green" />
-                Aarav Sharma (7.92 CGPA)
+            <div className="hidden md:flex flex-col gap-4 border-r border-[#e5e5ea] pr-6">
+              <div className="flex items-center gap-2.5 px-3 py-2 bg-white border border-[#e5e5ea] rounded-xl text-xs text-[#1d1d1f] shadow-2xs">
+                <div className="w-2 h-2 rounded-full bg-[#34c759]" />
+                <span className="font-medium">Aarav Sharma</span>
+                <span className="text-[10px] text-[#86868b]">7.92 CGPA</span>
               </div>
-              <div className="flex flex-col gap-1.5">
-                <div className="text-[10px] uppercase tracking-wider text-ink-tertiary font-bold">Menu</div>
-                <div className="text-[11px] font-medium text-primary bg-primary/10 border border-primary/20 px-2 py-1.5 rounded">Dashboard</div>
-                <div className="text-[11px] font-medium text-ink-subtle px-2 py-1 hover:text-ink">Jobs Listings</div>
-                <div className="text-[11px] font-medium text-ink-subtle px-2 py-1 hover:text-ink">My Applications</div>
-                <div className="text-[11px] font-medium text-ink-subtle px-2 py-1 hover:text-ink">Saved Openings</div>
+              <div className="flex flex-col gap-1">
+                <div className="text-[10px] uppercase tracking-wider text-[#86868b] font-semibold px-2">Navigation</div>
+                <div className="text-xs font-medium text-[#0066cc] bg-[#0066cc]/10 px-3 py-1.5 rounded-lg">Overview</div>
+                <div className="text-xs font-normal text-[#6e6e73] px-3 py-1.5 hover:bg-white rounded-lg">Jobs Listings</div>
+                <div className="text-xs font-normal text-[#6e6e73] px-3 py-1.5 hover:bg-white rounded-lg">My Applications</div>
+                <div className="text-xs font-normal text-[#6e6e73] px-3 py-1.5 hover:bg-white rounded-lg">Saved Roles</div>
               </div>
             </div>
 
             {/* Main Stats Frame */}
-            <div className="md:col-span-3 flex flex-col gap-6">
-              <div className="grid grid-cols-3 gap-4">
-                <div className="bg-surface-2/40 border border-hairline rounded-lg p-4">
-                  <div className="text-[10px] text-ink-subtle uppercase">Applied Positions</div>
-                  <div className="text-xl font-bold text-ink mt-1">12</div>
-                  <div className="text-[9px] text-success-green mt-1">4 Active Shortlists</div>
+            <div className="md:col-span-3 flex flex-col gap-5">
+              <div className="grid grid-cols-3 gap-3.5">
+                <div className="bg-white border border-[#e5e5ea] rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[11px] text-[#86868b] font-normal">Applied Roles</div>
+                  <div className="text-2xl font-semibold text-[#1d1d1f] mt-1">12</div>
+                  <div className="text-[10px] text-[#34c759] font-medium mt-1">4 Active Shortlists</div>
                 </div>
-                <div className="bg-surface-2/40 border border-hairline rounded-lg p-4">
-                  <div className="text-[10px] text-ink-subtle uppercase">Average CTC</div>
-                  <div className="text-xl font-bold text-ink mt-1">₹8.5 LPA</div>
-                  <div className="text-[9px] text-ink-tertiary mt-1">For CSE Graduates</div>
+                <div className="bg-white border border-[#e5e5ea] rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[11px] text-[#86868b] font-normal">Average Package</div>
+                  <div className="text-2xl font-semibold text-[#1d1d1f] mt-1">₹8.5 LPA</div>
+                  <div className="text-[10px] text-[#86868b] mt-1">CSE Graduates</div>
                 </div>
-                <div className="bg-surface-2/40 border border-hairline rounded-lg p-4">
-                  <div className="text-[10px] text-ink-subtle uppercase">Shortlist Rate</div>
-                  <div className="text-xl font-bold text-ink mt-1">82%</div>
-                  <div className="text-[9px] text-success-green mt-1">Profile Strength: High</div>
+                <div className="bg-white border border-[#e5e5ea] rounded-2xl p-4 shadow-2xs">
+                  <div className="text-[11px] text-[#86868b] font-normal">Shortlist Rate</div>
+                  <div className="text-2xl font-semibold text-[#1d1d1f] mt-1">82%</div>
+                  <div className="text-[10px] text-[#34c759] font-medium mt-1">Profile Strength: High</div>
                 </div>
               </div>
 
               {/* Mock Job Applications List */}
-              <div className="bg-surface-2/30 border border-hairline rounded-lg p-4">
-                <div className="text-[11px] font-semibold text-ink mb-3">Recent Application Status</div>
+              <div className="bg-white border border-[#e5e5ea] rounded-2xl p-4 shadow-2xs">
+                <div className="text-xs font-semibold text-[#1d1d1f] mb-3">Recent Application Status</div>
                 <div className="flex flex-col gap-2">
-                  <div className="flex items-center justify-between p-2 bg-surface-2/60 border border-hairline rounded text-[11px]">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 bg-primary/20 rounded flex items-center justify-center font-bold text-[10px] text-primary">IBM</span>
+                  <div className="flex items-center justify-between p-3 bg-[#f5f5f7] rounded-xl text-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="w-7 h-7 bg-[#0066cc]/10 border border-[#0066cc]/20 rounded-lg flex items-center justify-center font-bold text-xs text-[#0066cc]">IBM</span>
                       <div>
-                        <div className="font-semibold text-ink">Software Developer Intern</div>
-                        <div className="text-[9px] text-ink-tertiary">Applied 3 days ago</div>
+                        <div className="font-medium text-[#1d1d1f]">Software Developer Intern</div>
+                        <div className="text-[10px] text-[#86868b]">Applied 3 days ago</div>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-blue-900/30 text-blue-300 font-mono text-[9px] uppercase">Shortlisted</span>
+                    <span className="px-2.5 py-1 rounded-full bg-[#0066cc]/10 text-[#0066cc] font-medium text-[10px]">Shortlisted</span>
                   </div>
-                  <div className="flex items-center justify-between p-2 bg-surface-2/60 border border-hairline rounded text-[11px]">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 bg-yellow-500/20 rounded flex items-center justify-center font-bold text-[10px] text-yellow-500">TCS</span>
+                  <div className="flex items-center justify-between p-3 bg-[#f5f5f7] rounded-xl text-xs">
+                    <div className="flex items-center gap-3">
+                      <span className="w-7 h-7 bg-[#ff9500]/10 border border-[#ff9500]/20 rounded-lg flex items-center justify-center font-bold text-xs text-[#ff9500]">TCS</span>
                       <div>
-                        <div className="font-semibold text-ink">System Architect Associate</div>
-                        <div className="text-[9px] text-ink-tertiary">Applied 1 week ago</div>
+                        <div className="font-medium text-[#1d1d1f]">Associate Systems Engineer</div>
+                        <div className="text-[10px] text-[#86868b]">Applied 1 week ago</div>
                       </div>
                     </div>
-                    <span className="px-2 py-0.5 rounded-full bg-success-green/20 text-success-green font-mono text-[9px] uppercase">Accepted Offer</span>
+                    <span className="px-2.5 py-1 rounded-full bg-[#34c759]/10 text-[#34c759] font-medium text-[10px]">Offer Received</span>
                   </div>
                 </div>
               </div>
@@ -171,30 +171,30 @@ function HeroSection() {
   );
 }
 
-// 2. Infinite Recruiting Companies Marquee
+// 2. Recruiting Partners Marquee (Apple Partner Showcase)
 function RecruitersMarquee() {
-  const companies = ['IBM', 'TCS', 'Infosys', 'Wipro', 'Accenture', 'Google', 'Microsoft', 'Amazon', 'Meta', 'Capgemini'];
+  const companies = ['IBM', 'Google', 'Microsoft', 'Amazon', 'TCS', 'Infosys', 'Wipro', 'Accenture', 'Meta', 'Capgemini'];
   
   return (
-    <section className="w-full bg-surface-1 border-y border-hairline py-8 overflow-hidden select-none">
-      <div className="max-w-7xl mx-auto px-6 mb-3">
-        <h3 className="text-center text-[10px] uppercase tracking-widest font-bold text-ink-tertiary">
-          Trusted by Top Global Recruitment Partners
+    <section className="w-full bg-[#f5f5f7] border-b border-[#e5e5ea] py-10 overflow-hidden select-none">
+      <div className="max-w-7xl mx-auto px-6 mb-5 text-center">
+        <h3 className="text-xs uppercase tracking-widest font-medium text-[#86868b]">
+          Trusted by Premier Global Recruitment Partners
         </h3>
       </div>
       
       <div className="relative w-full overflow-hidden flex items-center">
-        {/* Gradients to mask sides */}
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-canvas to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-canvas to-transparent z-10 pointer-events-none" />
+        {/* Soft edge blur masks */}
+        <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-[#f5f5f7] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-[#f5f5f7] to-transparent z-10 pointer-events-none" />
         
-        <div className="animate-marquee gap-8">
+        <div className="animate-marquee gap-6">
           {[...companies, ...companies].map((name, i) => (
             <div 
               key={i} 
-              className="flex items-center gap-2 px-8 py-3 bg-canvas border border-hairline rounded-lg text-ink font-mono font-bold text-sm tracking-wide shadow-sm"
+              className="flex items-center gap-2.5 px-6 py-2.5 bg-white border border-[#e5e5ea] rounded-full text-[#1d1d1f] font-medium text-xs tracking-tight shadow-2xs hover:border-[#d2d2d7] transition-colors"
             >
-              <div className="w-3.5 h-3.5 bg-primary rounded-sm flex items-center justify-center text-[8px] text-white">★</div>
+              <div className="w-4 h-4 bg-[#0066cc]/10 rounded-full flex items-center justify-center text-[9px] text-[#0066cc]">✓</div>
               <span>{name}</span>
             </div>
           ))}
@@ -204,7 +204,7 @@ function RecruitersMarquee() {
   );
 }
 
-// 3. Card-based Features Grid
+// 3. Apple Product-Feature Tiles (Bento Grid)
 function FeaturesSection() {
   const features = [
     {
@@ -214,38 +214,44 @@ function FeaturesSection() {
     },
     {
       icon: ShieldCheck,
-      title: "Vetted Companies Only",
-      description: "Our Placement Cell approves registrations. Every job listing is legitimate, verified, and active."
+      title: "Vetted Enterprise Partners",
+      description: "Our Placement Cell approves registrations. Every job listing is legitimate, verified, and officially sanctioned."
     },
     {
       icon: Briefcase,
       title: "One-Click Application",
-      description: "Upload your photo and resume once. Apply to multiple job posts instantly with customized cover letters."
+      description: "Upload your resume once. Apply to multiple job posts instantly with customized cover letters and portfolios."
     },
     {
       icon: Sparkles,
-      title: "AI Chatbot Assistant",
-      description: "Get immediate replies to recruitment timelines, resume criteria, placement records, and FAQ guidance."
+      title: "AI Placement Assistant",
+      description: "Get immediate answers to recruitment timelines, resume criteria, placement records, and interview preparation."
     }
   ];
 
   return (
     <section className="py-24 px-6 max-w-7xl mx-auto">
       <div className="text-center mb-16">
-        <span className="text-xs font-semibold text-primary uppercase tracking-widest">Platform Core</span>
-        <h2 className="text-2xl md:text-4xl font-bold tracking-tight text-ink mt-2">
-          Engineered for Modern College Placements
+        <span className="text-xs font-semibold text-[#0066cc] uppercase tracking-widest">Platform Core</span>
+        <h2 className="text-3xl md:text-5xl font-semibold tracking-[-0.02em] text-[#1d1d1f] mt-2">
+          Engineered for Modern University Placements.
         </h2>
+        <p className="text-base text-[#6e6e73] max-w-xl mx-auto mt-3">
+          Designed with simplicity, speed, and precision so students and employers connect effortlessly.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((feat, idx) => (
-          <div key={idx} className="glass glass-lift p-6 rounded-lg flex flex-col gap-4">
-            <div className="w-10 h-10 rounded-md bg-surface-2 border border-hairline-strong flex items-center justify-center text-primary">
-              <feat.icon size={20} />
+          <div 
+            key={idx} 
+            className="bg-white border border-[#e5e5ea] rounded-[22px] p-7 flex flex-col gap-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+          >
+            <div className="w-12 h-12 rounded-2xl bg-[#f5f5f7] border border-[#e5e5ea] flex items-center justify-center text-[#0066cc]">
+              <feat.icon size={22} />
             </div>
-            <h3 className="text-base font-semibold text-ink">{feat.title}</h3>
-            <p className="text-xs text-ink-subtle leading-relaxed">{feat.description}</p>
+            <h3 className="text-lg font-semibold text-[#1d1d1f] tracking-tight">{feat.title}</h3>
+            <p className="text-xs text-[#6e6e73] leading-relaxed">{feat.description}</p>
           </div>
         ))}
       </div>
@@ -253,24 +259,24 @@ function FeaturesSection() {
   );
 }
 
-// 4. Statistics Section
+// 4. Statistics Section (Apple Keynote Style)
 function StatisticsSection() {
   const stats = [
     { value: "₹32 LPA", label: "Highest CTC Offered" },
     { value: "₹8.5 LPA", label: "Average CTC Package" },
     { value: "98.2%", label: "2025 Placement Rate" },
-    { value: "10+", label: "Fortune 500 Recruiters" }
+    { value: "120+", label: "Fortune 500 Recruiters" }
   ];
 
   return (
-    <section id="statistics" className="py-20 bg-surface-1/40 border-y border-hairline px-6">
+    <section id="statistics" className="py-20 bg-white border-y border-[#e5e5ea] px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
         {stats.map((stat, i) => (
-          <div key={i} className="flex flex-col gap-2">
-            <span className="text-3xl md:text-5xl font-extrabold tracking-tight text-ink font-mono bg-gradient-to-b from-ink to-ink-muted bg-clip-text text-transparent">
+          <div key={i} className="flex flex-col gap-1.5 p-4 rounded-2xl hover:bg-[#f5f5f7] transition-colors">
+            <span className="text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight text-[#1d1d1f]">
               {stat.value}
             </span>
-            <span className="text-xs text-ink-subtle font-medium">{stat.label}</span>
+            <span className="text-xs text-[#86868b] font-normal">{stat.label}</span>
           </div>
         ))}
       </div>
@@ -278,7 +284,7 @@ function StatisticsSection() {
   );
 }
 
-// 5. Accordion FAQs Section
+// 5. Accordion FAQs Section (iOS Settings Style)
 function FaqSection() {
   const faqs = [
     {
@@ -308,27 +314,28 @@ function FaqSection() {
   return (
     <section id="faq" className="py-24 px-6 max-w-3xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">
+        <h2 className="text-3xl font-semibold tracking-tight text-[#1d1d1f]">
           Frequently Asked Questions
         </h2>
+        <p className="text-xs text-[#86868b] mt-2">Clear answers to common placement queries.</p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="bg-white border border-[#e5e5ea] rounded-[22px] overflow-hidden shadow-sm divide-y divide-[#e5e5ea]">
         {faqs.map((faq, idx) => (
-          <div key={idx} className="bg-surface-1 border border-hairline rounded-lg overflow-hidden">
+          <div key={idx} className="transition-colors">
             <button 
               onClick={() => toggle(idx)}
-              className="w-full flex items-center justify-between p-5 text-left text-sm font-medium text-ink hover:bg-surface-2 transition-colors cursor-pointer"
+              className="w-full flex items-center justify-between p-5 text-left text-sm font-medium text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer"
             >
               <span>{faq.q}</span>
               <ChevronDown 
                 size={16} 
-                className={`text-ink-subtle transform transition-transform duration-250 ${activeIndex === idx ? 'rotate-180 text-primary' : ''}`} 
+                className={`text-[#86868b] transform transition-transform duration-200 ${activeIndex === idx ? 'rotate-180 text-[#0066cc]' : ''}`} 
               />
             </button>
             
             {activeIndex === idx && (
-              <div className="p-5 border-t border-hairline bg-canvas/30 text-xs text-ink-subtle leading-relaxed">
+              <div className="px-5 pb-5 text-xs text-[#6e6e73] leading-relaxed">
                 {faq.a}
               </div>
             )}
@@ -339,7 +346,7 @@ function FaqSection() {
   );
 }
 
-// 6. Contact Section with Glassmorphic Form
+// 6. Contact Section with Apple Support Clean Form
 function ContactSection() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [sent, setSent] = useState(false);
@@ -381,51 +388,49 @@ function ContactSection() {
   };
 
   return (
-    <section className="py-24 px-6 max-w-xl mx-auto relative">
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-80 h-80 bg-primary/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-
-      <div className="text-center mb-12">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-ink">
+    <section className="py-24 px-6 max-w-xl mx-auto">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-semibold tracking-tight text-[#1d1d1f]">
           Contact Placement Cell
         </h2>
-        <p className="text-xs text-ink-subtle mt-2">
-          Recruiters, faculty members, and student coordinators can message us here.
+        <p className="text-xs text-[#86868b] mt-2">
+          Recruiters, faculty members, and student coordinators can reach us directly.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass p-8 rounded-xl flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="bg-white border border-[#e5e5ea] p-8 rounded-[24px] shadow-sm flex flex-col gap-4">
         <div>
-          <label className="block text-xs font-medium text-ink-subtle mb-1.5">Full Name</label>
+          <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Full Name</label>
           <input 
             type="text" 
             required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded px-3 py-2 text-sm text-ink transition-all"
+            className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl px-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
             placeholder="Aarav Sharma"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-ink-subtle mb-1.5">Email Address</label>
+          <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Email Address</label>
           <input 
             type="email" 
             required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded px-3 py-2 text-sm text-ink transition-all"
+            className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl px-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
             placeholder="aarav@placement.edu"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-ink-subtle mb-1.5">Your Message</label>
+          <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Your Message</label>
           <textarea 
             rows={4}
             required
             value={formData.message}
             onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-            className="w-full bg-surface-2 border border-hairline focus:border-hairline-strong focus:outline-none focus:ring-1 focus:ring-primary rounded px-3 py-2 text-sm text-ink resize-none transition-all"
+            className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl px-3.5 py-2.5 text-xs text-[#1d1d1f] resize-none transition-all"
             placeholder="Hello, I would like to query about recruitment timelines..."
           />
         </div>
@@ -433,10 +438,13 @@ function ContactSection() {
         <button 
           type="submit" 
           disabled={sent || loading}
-          className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-white bg-primary hover:bg-primary-hover py-2.5 rounded-md transition-colors disabled:opacity-70 disabled:cursor-default cursor-pointer mt-2"
+          className="w-full flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] py-3 rounded-full transition-all disabled:opacity-60 cursor-pointer mt-2 shadow-sm"
         >
           {sent ? (
-            <span>✅ Message Sent Successfully!</span>
+            <span className="flex items-center gap-1.5">
+              <Check size={16} />
+              Message Sent Successfully
+            </span>
           ) : loading ? (
             <span>Sending...</span>
           ) : (
@@ -448,7 +456,7 @@ function ContactSection() {
         </button>
 
         {error && (
-          <p className="text-xs text-red-400 text-center mt-1">{error}</p>
+          <p className="text-xs text-[#ff3b30] text-center mt-1">{error}</p>
         )}
       </form>
     </section>
