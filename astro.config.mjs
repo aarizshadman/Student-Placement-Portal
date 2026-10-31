@@ -10,7 +10,7 @@ export default defineConfig({
     server: {
       proxy: {
         '/uploads': {
-          target: 'https://students-placement-portal.onrender.com',
+          target: 'https://student-placement-portal-1-l7nk.onrender.com',
           changeOrigin: true,
         },
       },
