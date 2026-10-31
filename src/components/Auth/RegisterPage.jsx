@@ -51,7 +51,7 @@ export default function RegisterPage() {
       setSession(data.token, data.role, data.email, data.isApproved);
       
       // Redirect based on role
-      window.location.href = `/${data.role}`;
+      window.location.href = `/${data.role}/dashboard`;
     } catch (err) {
       setError(err.message || 'Registration failed. Please try again.');
     } finally {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, AlertCircle } from 'lucide-react';
-import { api } from '../../utils/api.js';
+import { Mail, Lock, ArrowRight, AlertCircle, ExternalLink, ShieldCheck, GraduationCap, Building2, Sparkles } from 'lucide-react';
+import { api, API_BASE_URL } from '../../utils/api.js';
 import { setSession, isAuthenticated, getRole } from '../../utils/auth.js';
 
 export default function LoginPage() {
@@ -9,28 +9,28 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [ssoRole, setSsoRole] = useState('student'); // 'student' or 'company'
 
   useEffect(() => {
-    // Redirect if already authenticated
     if (isAuthenticated()) {
       const role = getRole();
-      window.location.href = `/${role}`;
+      window.location.href = role === 'admin' ? '/admin' : `/${role}/dashboard`;
     }
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleLoginWithCredentials = async (loginEmail, loginPassword) => {
     setError('');
     setLoading(true);
 
     try {
-      const data = await api.auth.login({ email, password });
-      
-      // Save credentials in session
+      const data = await api.auth.login({ email: loginEmail, password: loginPassword });
       setSession(data.token, data.role, data.email, data.isApproved);
       
-      // Redirect based on role (admins use the separate admin portal)
-      window.location.href = data.role === 'admin' ? '/admin' : `/${data.role}`;
+      if (data.role === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = `/${data.role}/dashboard`;
+      }
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -38,13 +38,26 @@ export default function LoginPage() {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleLoginWithCredentials(email, password);
+  };
+
+  const quickDemoLogin = (demoEmail, demoPassword) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    handleLoginWithCredentials(demoEmail, demoPassword);
+  };
+
+  const ibmAppIdUrl = `${API_BASE_URL}/auth/appid/login?role=${ssoRole}`;
+
   return (
     <div className="min-h-[85vh] w-full flex items-center justify-center px-6 py-12">
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-[420px] bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[26px] flex flex-col gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
+        transition={{ duration: 0.35 }}
+        className="w-full max-w-[440px] bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[28px] flex flex-col gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
       >
         {/* Card Header */}
         <div className="text-center flex flex-col gap-2">
@@ -52,28 +65,47 @@ export default function LoginPage() {
             C
           </div>
           <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Sign In</h2>
-          <p className="text-xs text-[#86868b]">Use your CampusConnect placement credentials</p>
+          <p className="text-xs text-[#86868b]">Universal access for Students, Recruiters, and Placement Admins</p>
         </div>
 
-        {/* Demo credentials callout */}
-        <div className="bg-[#f5f5f7] border border-[#e5e5ea] rounded-xl p-3.5 text-xs text-[#6e6e73] leading-relaxed">
-          <div className="font-semibold text-[#1d1d1f] mb-1">Demo Credentials:</div>
-          <div className="grid grid-cols-2 gap-x-2 text-[11px]">
-            <span>Student: <code className="text-[#0066cc]">student1@placement.edu</code></span>
-            <span>(password123)</span>
-            <span>Company: <code className="text-[#0066cc]">hr@ibm.com</code></span>
-            <span>(password123)</span>
+        {/* 1-Click Quick Demo Login Pills */}
+        <div className="flex flex-col gap-2 p-3 bg-[#f5f5f7] border border-[#e5e5ea] rounded-2xl">
+          <div className="flex items-center justify-between text-[11px] font-medium text-[#1d1d1f] px-1">
+            <span className="flex items-center gap-1 text-[#0066cc]">
+              <Sparkles size={12} />
+              1-Click Demo Login:
+            </span>
+            <span className="text-[#86868b] text-[10px]">Instant Sign-in</span>
           </div>
-          <div className="mt-2 pt-2 border-t border-[#e5e5ea] text-[11px]">
-            Administrators sign in at the{' '}
-            <a href="/admin" className="text-[#0066cc] hover:underline font-medium">Admin Portal</a>.
+          <div className="grid grid-cols-3 gap-1.5">
+            <button
+              type="button"
+              onClick={() => quickDemoLogin('student1@placement.edu', 'password123')}
+              className="py-1.5 px-2 bg-white hover:bg-[#0066cc]/5 hover:border-[#0066cc]/30 border border-[#e5e5ea] rounded-xl text-[11px] font-medium text-[#1d1d1f] transition-all cursor-pointer shadow-2xs"
+            >
+              🎓 Student
+            </button>
+            <button
+              type="button"
+              onClick={() => quickDemoLogin('hr@ibm.com', 'password123')}
+              className="py-1.5 px-2 bg-white hover:bg-[#0066cc]/5 hover:border-[#0066cc]/30 border border-[#e5e5ea] rounded-xl text-[11px] font-medium text-[#1d1d1f] transition-all cursor-pointer shadow-2xs"
+            >
+              🏢 Recruiter
+            </button>
+            <button
+              type="button"
+              onClick={() => quickDemoLogin('admin@placement.edu', 'admin123')}
+              className="py-1.5 px-2 bg-white hover:bg-[#0066cc]/5 hover:border-[#0066cc]/30 border border-[#e5e5ea] rounded-xl text-[11px] font-medium text-[#1d1d1f] transition-all cursor-pointer shadow-2xs"
+            >
+              🛡️ Admin
+            </button>
           </div>
         </div>
 
         {/* Error Feedback */}
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-xl text-xs text-[#ff3b30]">
-            <AlertCircle size={14} className="shrink-0 mt-0.5" />
+          <div className="flex items-start gap-2.5 p-3.5 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-2xl text-xs text-[#ff3b30]">
+            <AlertCircle size={15} className="shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
@@ -83,24 +115,22 @@ export default function LoginPage() {
           <div>
             <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Email address</label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-3 text-[#86868b]" size={16} />
+              <Mail className="absolute left-3.5 top-3 text-[#86868b]" size={15} />
               <input 
                 type="email" 
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
-                placeholder="aarav@placement.edu"
+                placeholder="name@placement.edu or hr@company.com"
               />
             </div>
           </div>
 
           <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-medium text-[#1d1d1f]">Password</label>
-            </div>
+            <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3 text-[#86868b]" size={16} />
+              <Lock className="absolute left-3.5 top-3 text-[#86868b]" size={15} />
               <input 
                 type="password" 
                 required
@@ -115,9 +145,9 @@ export default function LoginPage() {
           <button 
             type="submit" 
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] py-2.5 rounded-full transition-all disabled:opacity-60 cursor-pointer mt-2 shadow-sm"
+            className="w-full flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] active:scale-[0.98] py-2.5 rounded-full transition-all duration-200 disabled:opacity-60 cursor-pointer mt-1 shadow-sm"
           >
-            {loading ? <span>Signing in...</span> : (
+            {loading ? <span>Authenticating...</span> : (
               <>
                 <span>Sign In</span>
                 <ArrowRight size={14} />
@@ -126,16 +156,51 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="text-center text-xs text-[#86868b]">
-          Don't have an account?{' '}
-          <a href="/register" className="text-[#0066cc] hover:underline font-medium">
-            Register here
+        {/* Divider */}
+        <div className="relative flex items-center justify-center my-1">
+          <hr className="w-full border-[#e5e5ea]" />
+          <span className="absolute bg-white px-3 text-[10px] uppercase font-semibold text-[#86868b] tracking-wider">
+            Or Enterprise SSO
+          </span>
+        </div>
+
+        {/* IBM App ID Section */}
+        <div className="flex flex-col gap-2.5">
+          <div className="grid grid-cols-2 p-1 bg-[#f5f5f7] border border-[#e5e5ea] rounded-full">
+            <button
+              type="button"
+              onClick={() => setSsoRole('student')}
+              className={`py-1.5 text-xs font-medium rounded-full cursor-pointer transition-all duration-200 ${
+                ssoRole === 'student' ? 'bg-white text-[#1d1d1f] shadow-2xs' : 'text-[#6e6e73]'
+              }`}
+            >
+              Student SSO
+            </button>
+            <button
+              type="button"
+              onClick={() => setSsoRole('company')}
+              className={`py-1.5 text-xs font-medium rounded-full cursor-pointer transition-all duration-200 ${
+                ssoRole === 'company' ? 'bg-white text-[#1d1d1f] shadow-2xs' : 'text-[#6e6e73]'
+              }`}
+            >
+              Recruiter SSO
+            </button>
+          </div>
+
+          <a
+            href={ibmAppIdUrl}
+            className="w-full flex items-center justify-center gap-2 text-xs font-medium text-[#1d1d1f] bg-[#f5f5f7] hover:bg-[#e8e8ed] border border-[#d2d2d7] py-2.5 rounded-full transition-all active:scale-[0.98] cursor-pointer"
+          >
+            <ExternalLink size={13} className="text-[#0066cc]" />
+            <span>Continue with IBM App ID ({ssoRole === 'student' ? 'Student' : 'Recruiter'})</span>
           </a>
         </div>
 
-        <div className="text-center text-[11px] text-[#86868b] border-t border-[#e5e5ea] pt-3">
-          <a href="/admin" className="hover:text-[#0066cc] transition-colors">
-            Administrator? Go to Admin Portal
+        {/* Footer Link to Register */}
+        <div className="text-center text-xs text-[#86868b] pt-1 border-t border-[#e5e5ea]">
+          Don't have an account yet?{' '}
+          <a href="/register" className="text-[#0066cc] hover:underline font-medium">
+            Create an Account
           </a>
         </div>
       </motion.div>

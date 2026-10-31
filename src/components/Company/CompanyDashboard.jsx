@@ -47,11 +47,11 @@ export default function CompanyDashboard() {
     applyAuthFromUrl();
 
     if (!isAuthenticated()) {
-      window.location.href = '/company';
+      window.location.href = '/login';
       return;
     }
     if (getRole() !== 'company') {
-      window.location.href = getRole() === 'student' ? '/student' : '/admin';
+      window.location.href = getRole() === 'student' ? '/student/dashboard' : '/admin';
       return;
     }
 

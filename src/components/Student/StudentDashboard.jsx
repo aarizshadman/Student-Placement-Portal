@@ -58,11 +58,11 @@ export default function StudentDashboard() {
     applyAuthFromUrl();
 
     if (!isAuthenticated()) {
-      window.location.href = '/student';
+      window.location.href = '/login';
       return;
     }
     if (getRole() !== 'student') {
-      window.location.href = getRole() === 'admin' ? '/admin' : '/company';
+      window.location.href = getRole() === 'admin' ? '/admin' : '/company/dashboard';
       return;
     }
 

@@ -1,11 +1,11 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import PortalChooser from '../components/Auth/PortalChooser.jsx';
+import LoginPage from '../components/Auth/LoginPage.jsx';
 ---
 
 <Layout 
   title="Sign In | CampusConnect"
-  description="Sign in to the CampusConnect Student Placement Portal. Choose the Student, Recruiter, or Admin portal to continue."
+  description="Sign in to the CampusConnect Student Placement Portal using your credentials or IBM App ID enterprise single sign-on."
 >
-  <PortalChooser client:only="react" />
+  <LoginPage client:only="react" />
 </Layout>
