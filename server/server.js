@@ -30,7 +30,9 @@ app.use(cors({
   origin: [
     'http://localhost:4321',
     'http://127.0.0.1:4321',
-    'https://student-placement-portal-chi.vercel.app'
+    'https://student-placement-portal-chi.vercel.app',
+    'https://student-placement-portal-plum.vercel.app',
+    process.env.FRONTEND_URL
   ],
   credentials: true
 }));
