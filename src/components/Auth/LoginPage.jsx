@@ -191,7 +191,7 @@ export default function LoginPage() {
                     </a>
                   ) : (
                     <div className="text-center text-[11px] text-[#86868b]">
-                      Authenticates via IBM Cloud App ID
+                      After Login You Get Your Dashboard
                     </div>
                   )}
                 </div>
