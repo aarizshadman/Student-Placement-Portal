@@ -6,7 +6,7 @@ import {
   Download, Clock, Check, AlertCircle, ChevronRight
 } from 'lucide-react';
 import { api, fileUrl } from '../../utils/api.js';
-import { isAuthenticated, getRole, clearSession } from '../../utils/auth.js';
+import { isAuthenticated, getRole, clearSession, applyAuthFromUrl } from '../../utils/auth.js';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview'); // overview, approvals, students, companies, jobs
@@ -26,6 +26,8 @@ export default function AdminDashboard() {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
   useEffect(() => {
+    applyAuthFromUrl();
+
     if (!isAuthenticated()) {
       window.location.href = '/login';
       return;

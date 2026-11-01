@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import AdminDashboard from './AdminDashboard.jsx';
 import AdminLoginPage from '../Auth/AdminLoginPage.jsx';
-import { isAuthenticated, getRole } from '../../utils/auth.js';
+import { isAuthenticated, getRole, applyAuthFromUrl } from '../../utils/auth.js';
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
+    applyAuthFromUrl();
     setAuthed(isAuthenticated() && getRole() === 'admin');
   }, []);
 

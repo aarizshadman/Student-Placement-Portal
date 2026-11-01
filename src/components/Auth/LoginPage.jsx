@@ -1,207 +1,209 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, ArrowRight, AlertCircle, ExternalLink, ShieldCheck, GraduationCap, Building2, Sparkles } from 'lucide-react';
-import { api, API_BASE_URL } from '../../utils/api.js';
-import { setSession, isAuthenticated, getRole } from '../../utils/auth.js';
+import { 
+  GraduationCap, 
+  Building2, 
+  ShieldCheck, 
+  ArrowRight, 
+  AlertCircle,
+  CheckCircle2,
+  Lock,
+  ExternalLink
+} from 'lucide-react';
+import { API_BASE_URL } from '../../utils/api.js';
+import { isAuthenticated, getRole, applyAuthFromUrl } from '../../utils/auth.js';
+
+const portals = [
+  {
+    key: 'student',
+    role: 'student',
+    name: 'Student Portal',
+    badge: 'Students & Alumni',
+    desc: 'Explore active placements, apply for jobs, and build your verified resume profile.',
+    icon: GraduationCap,
+    accent: 'bg-[#0066cc]/10 text-[#0066cc] border-[#0066cc]/20',
+    buttonClass: 'bg-[#0066cc] hover:bg-[#0077ed] text-white',
+    features: [
+      'Browse verified campus placements',
+      'One-click resume applications',
+      'AI placement prep assistant'
+    ]
+  },
+  {
+    key: 'company',
+    role: 'company',
+    name: 'Recruiter Portal',
+    badge: 'Corporate Partners',
+    desc: 'Publish campus vacancies, screen candidates by CGPA, and hire top student talent.',
+    icon: Building2,
+    accent: 'bg-[#5856d6]/10 text-[#5856d6] border-[#5856d6]/20',
+    buttonClass: 'bg-[#5856d6] hover:bg-[#6865e8] text-white',
+    features: [
+      'Post full-time & internship roles',
+      'Screen verified candidate dossiers',
+      'Manage applicant shortlists'
+    ]
+  },
+  {
+    key: 'admin',
+    role: 'admin',
+    name: 'Admin Portal',
+    badge: 'Placement Cell',
+    desc: 'Placement cell management desk, recruiter approvals queue, and batch analytics.',
+    icon: ShieldCheck,
+    accent: 'bg-[#34c759]/10 text-[#34c759] border-[#34c759]/20',
+    buttonClass: 'bg-[#1d1d1f] hover:bg-[#333336] text-white',
+    features: [
+      'Recruiter verification approvals queue',
+      'Batch placement statistics & funnels',
+      'Campus-wide job & candidate controls'
+    ]
+  }
+];
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [ssoRole, setSsoRole] = useState('student'); // 'student' or 'company'
+  const [urlError, setUrlError] = useState('');
 
   useEffect(() => {
+    applyAuthFromUrl();
+
     if (isAuthenticated()) {
       const role = getRole();
-      window.location.href = role === 'admin' ? '/admin' : `/${role}/dashboard`;
+      if (role === 'admin') {
+        window.location.href = '/admin';
+      } else {
+        window.location.href = `/${role}/dashboard`;
+      }
+      return;
+    }
+
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const err = params.get('error');
+      if (err) {
+        if (err === 'appid_failed') {
+          setUrlError('IBM App ID sign-in was cancelled or could not be completed. Please try again.');
+        } else if (err === 'appid_server') {
+          setUrlError('IBM App ID authentication server error. Please try again later.');
+        } else if (err === 'appid_noemail') {
+          setUrlError('No verified email address was returned from IBM App ID.');
+        } else {
+          setUrlError('Authentication could not be completed. Please try again.');
+        }
+      }
     }
   }, []);
 
-  const handleLoginWithCredentials = async (loginEmail, loginPassword) => {
-    setError('');
-    setLoading(true);
-
-    try {
-      const data = await api.auth.login({ email: loginEmail, password: loginPassword });
-      setSession(data.token, data.role, data.email, data.isApproved);
-      
-      if (data.role === 'admin') {
-        window.location.href = '/admin';
-      } else {
-        window.location.href = `/${data.role}/dashboard`;
-      }
-    } catch (err) {
-      setError(err.message || 'Login failed. Please check your credentials.');
-    } finally {
-      setLoading(false);
-    }
+  const getLoginUrl = (role) => {
+    return `${API_BASE_URL}/auth/appid/login?role=${role}`;
   };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleLoginWithCredentials(email, password);
-  };
-
-  const quickDemoLogin = (demoEmail, demoPassword) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    handleLoginWithCredentials(demoEmail, demoPassword);
-  };
-
-  const ibmAppIdUrl = `${API_BASE_URL}/auth/appid/login?role=${ssoRole}`;
 
   return (
     <div className="min-h-[85vh] w-full flex items-center justify-center px-6 py-12">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="w-full max-w-[440px] bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[28px] flex flex-col gap-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)]"
+        className="w-full max-w-5xl flex flex-col gap-8"
       >
-        {/* Card Header */}
-        <div className="text-center flex flex-col gap-2">
-          <div className="w-10 h-10 rounded-full bg-[#0066cc]/10 border border-[#0066cc]/20 flex items-center justify-center font-bold text-sm text-[#0066cc] mx-auto">
+        {/* Header */}
+        <div className="text-center flex flex-col gap-2.5 max-w-xl mx-auto">
+          <div className="w-10 h-10 rounded-full bg-[#0066cc]/10 border border-[#0066cc]/20 flex items-center justify-center font-bold text-sm text-[#0066cc] mx-auto shadow-2xs">
             C
           </div>
-          <h2 className="text-2xl font-semibold tracking-tight text-[#1d1d1f]">Sign In</h2>
-          <p className="text-xs text-[#86868b]">Universal access for Students, Recruiters, and Placement Admins</p>
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1d1d1f]">
+            Sign in to CampusConnect
+          </h2>
+          <p className="text-xs sm:text-sm text-[#86868b] leading-relaxed">
+            Select your designated portal to continue with IBM App ID enterprise single sign-on
+          </p>
         </div>
 
-        {/* 1-Click Quick Demo Login Pills */}
-        <div className="flex flex-col gap-2 p-3 bg-[#f5f5f7] border border-[#e5e5ea] rounded-2xl">
-          <div className="flex items-center justify-between text-[11px] font-medium text-[#1d1d1f] px-1">
-            <span className="flex items-center gap-1 text-[#0066cc]">
-              <Sparkles size={12} />
-              1-Click Demo Login:
-            </span>
-            <span className="text-[#86868b] text-[10px]">Instant Sign-in</span>
-          </div>
-          <div className="grid grid-cols-3 gap-1.5">
-            <button
-              type="button"
-              onClick={() => quickDemoLogin('student1@placement.edu', 'password123')}
-              className="py-1.5 px-2 bg-white hover:bg-[#0066cc]/5 hover:border-[#0066cc]/30 border border-[#e5e5ea] rounded-xl text-[11px] font-medium text-[#1d1d1f] transition-all cursor-pointer shadow-2xs"
-            >
-              🎓 Student
-            </button>
-            <button
-              type="button"
-              onClick={() => quickDemoLogin('hr@ibm.com', 'password123')}
-              className="py-1.5 px-2 bg-white hover:bg-[#0066cc]/5 hover:border-[#0066cc]/30 border border-[#e5e5ea] rounded-xl text-[11px] font-medium text-[#1d1d1f] transition-all cursor-pointer shadow-2xs"
-            >
-              🏢 Recruiter
-            </button>
-            <button
-              type="button"
-              onClick={() => quickDemoLogin('admin@placement.edu', 'admin123')}
-              className="py-1.5 px-2 bg-white hover:bg-[#0066cc]/5 hover:border-[#0066cc]/30 border border-[#e5e5ea] rounded-xl text-[11px] font-medium text-[#1d1d1f] transition-all cursor-pointer shadow-2xs"
-            >
-              🛡️ Admin
-            </button>
-          </div>
-        </div>
-
-        {/* Error Feedback */}
-        {error && (
-          <div className="flex items-start gap-2.5 p-3.5 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-2xl text-xs text-[#ff3b30]">
+        {/* URL Error Alert */}
+        {urlError && (
+          <div className="max-w-xl mx-auto w-full flex items-start gap-2.5 p-3.5 bg-[#ff3b30]/10 border border-[#ff3b30]/20 rounded-2xl text-xs text-[#ff3b30]">
             <AlertCircle size={15} className="shrink-0 mt-0.5" />
-            <span>{error}</span>
+            <span>{urlError}</span>
           </div>
         )}
 
-        {/* Form Fields */}
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Email address</label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-3 text-[#86868b]" size={15} />
-              <input 
-                type="email" 
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
-                placeholder="name@placement.edu or hr@company.com"
-              />
-            </div>
-          </div>
+        {/* 3 Portal Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {portals.map((portal, index) => {
+            const Icon = portal.icon;
+            const loginUrl = getLoginUrl(portal.role);
 
-          <div>
-            <label className="block text-xs font-medium text-[#1d1d1f] mb-1.5">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3.5 top-3 text-[#86868b]" size={15} />
-              <input 
-                type="password" 
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#f5f5f7] border border-[#d2d2d7] focus:border-[#0066cc] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0066cc]/20 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-[#1d1d1f] transition-all"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
+            return (
+              <motion.div
+                key={portal.key}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.08 }}
+                className="bg-white border border-[#e5e5ea] hover:border-[#d2d2d7] rounded-[24px] p-7 flex flex-col justify-between gap-6 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.08)] transition-all duration-300"
+              >
+                {/* Top Section */}
+                <div className="flex flex-col gap-5">
+                  <div className="flex items-center justify-between">
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${portal.accent}`}>
+                      <Icon size={22} />
+                    </div>
+                    <span className="text-[11px] font-medium text-[#86868b] bg-[#f5f5f7] border border-[#e5e5ea] px-2.5 py-1 rounded-full">
+                      {portal.badge}
+                    </span>
+                  </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full flex items-center justify-center gap-2 text-sm font-normal text-white bg-[#0066cc] hover:bg-[#0077ed] active:scale-[0.98] py-2.5 rounded-full transition-all duration-200 disabled:opacity-60 cursor-pointer mt-1 shadow-sm"
-          >
-            {loading ? <span>Authenticating...</span> : (
-              <>
-                <span>Sign In</span>
-                <ArrowRight size={14} />
-              </>
-            )}
-          </button>
-        </form>
+                  <div className="flex flex-col gap-1.5">
+                    <h3 className="text-lg font-semibold text-[#1d1d1f] tracking-tight">
+                      {portal.name}
+                    </h3>
+                    <p className="text-xs text-[#6e6e73] leading-relaxed">
+                      {portal.desc}
+                    </p>
+                  </div>
 
-        {/* Divider */}
-        <div className="relative flex items-center justify-center my-1">
-          <hr className="w-full border-[#e5e5ea]" />
-          <span className="absolute bg-white px-3 text-[10px] uppercase font-semibold text-[#86868b] tracking-wider">
-            Or Enterprise SSO
-          </span>
+                  {/* Feature Highlights */}
+                  <div className="flex flex-col gap-2 pt-2 border-t border-[#f0f0f2]">
+                    {portal.features.map((feature, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs text-[#1d1d1f]">
+                        <CheckCircle2 size={13} className="text-[#34c759] shrink-0" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bottom Action */}
+                <div className="flex flex-col gap-2.5 pt-4 border-t border-[#f0f0f2]">
+                  <a
+                    href={loginUrl}
+                    className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-full text-xs font-medium transition-all shadow-sm active:scale-[0.98] cursor-pointer ${portal.buttonClass}`}
+                  >
+                    <span>Sign In</span>
+                    <ArrowRight size={14} />
+                  </a>
+
+                  {portal.role === 'admin' ? (
+                    <a
+                      href="/admin"
+                      className="text-center text-[11px] text-[#86868b] hover:text-[#1d1d1f] hover:underline transition-colors py-0.5"
+                    >
+                      Or sign in with master admin password
+                    </a>
+                  ) : (
+                    <div className="text-center text-[11px] text-[#86868b]">
+                      Authenticates via IBM Cloud App ID
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
 
-        {/* IBM App ID Section */}
-        <div className="flex flex-col gap-2.5">
-          <div className="grid grid-cols-2 p-1 bg-[#f5f5f7] border border-[#e5e5ea] rounded-full">
-            <button
-              type="button"
-              onClick={() => setSsoRole('student')}
-              className={`py-1.5 text-xs font-medium rounded-full cursor-pointer transition-all duration-200 ${
-                ssoRole === 'student' ? 'bg-white text-[#1d1d1f] shadow-2xs' : 'text-[#6e6e73]'
-              }`}
-            >
-              Student SSO
-            </button>
-            <button
-              type="button"
-              onClick={() => setSsoRole('company')}
-              className={`py-1.5 text-xs font-medium rounded-full cursor-pointer transition-all duration-200 ${
-                ssoRole === 'company' ? 'bg-white text-[#1d1d1f] shadow-2xs' : 'text-[#6e6e73]'
-              }`}
-            >
-              Recruiter SSO
-            </button>
-          </div>
-
-          <a
-            href={ibmAppIdUrl}
-            className="w-full flex items-center justify-center gap-2 text-xs font-medium text-[#1d1d1f] bg-[#f5f5f7] hover:bg-[#e8e8ed] border border-[#d2d2d7] py-2.5 rounded-full transition-all active:scale-[0.98] cursor-pointer"
-          >
-            <ExternalLink size={13} className="text-[#0066cc]" />
-            <span>Continue with IBM App ID ({ssoRole === 'student' ? 'Student' : 'Recruiter'})</span>
-          </a>
-        </div>
-
-        {/* Footer Link to Register */}
-        <div className="text-center text-xs text-[#86868b] pt-1 border-t border-[#e5e5ea]">
-          Don't have an account yet?{' '}
-          <a href="/register" className="text-[#0066cc] hover:underline font-medium">
-            Create an Account
-          </a>
+        {/* Footer SSO Note */}
+        <div className="text-center text-xs text-[#86868b] max-w-xl mx-auto flex items-center justify-center gap-1.5">
+          <Lock size={12} className="text-[#86868b]" />
+          <span>Protected by Enterprise IBM App ID OAuth2 / OIDC Single Sign-On</span>
         </div>
       </motion.div>
     </div>

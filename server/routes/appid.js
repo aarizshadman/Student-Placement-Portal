@@ -87,7 +87,7 @@ router.get(
   '/appid/login',
   requireConfigured,
   (req, res, next) => {
-    req.session.appIdRole = req.query.role === 'company' ? 'company' : 'student';
+    req.session.appIdRole = ['company', 'admin'].includes(req.query.role) ? req.query.role : 'student';
     console.log('[AppID] LOGIN started — role:', req.session.appIdRole);
     console.log('[AppID] successRedirect will be:', AFTER_AUTH_PATH);
     passport.authenticate(WebAppStrategy.STRATEGY_NAME, { successRedirect: AFTER_AUTH_PATH })(req, res, next);
@@ -147,7 +147,7 @@ router.get(AFTER_AUTH_ROUTE, requireConfigured, async (req, res) => {
       return res.redirect(`${frontendUrl()}/login?error=appid_noemail`);
     }
 
-    const intentRole = req.session.appIdRole === 'company' ? 'company' : 'student';
+    const intentRole = ['company', 'admin'].includes(req.session.appIdRole) ? req.session.appIdRole : 'student';
 
     let user = await User.findOne({ email });
 
@@ -169,7 +169,7 @@ router.get(AFTER_AUTH_ROUTE, requireConfigured, async (req, res) => {
           projects: [],
           cgpa: 0
         });
-      } else {
+      } else if (intentRole === 'company') {
         await Company.create({
           user: user._id,
           companyName: name || email.split('@')[0],
@@ -235,7 +235,11 @@ router.get(AFTER_AUTH_ROUTE, requireConfigured, async (req, res) => {
       approved: String(user.isApproved)
     });
 
-    res.redirect(`${frontendUrl()}/${role}/dashboard?${qs.toString()}`);
+    const redirectTarget = role === 'admin'
+      ? `${frontendUrl()}/admin?${qs.toString()}`
+      : `${frontendUrl()}/${role}/dashboard?${qs.toString()}`;
+
+    res.redirect(redirectTarget);
   } catch (error) {
     console.error('[AppID] Post-auth error:', error);
     res.redirect(`${frontendUrl()}/login?error=appid_server`);
