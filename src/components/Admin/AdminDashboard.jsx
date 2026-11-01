@@ -547,21 +547,44 @@ export default function AdminDashboard() {
                             </span>
                           </td>
                           <td className="py-3.5 text-right">
-                            {comp.status === 'pending' ? (
-                              <button 
-                                onClick={() => handleApproveCompany(comp._id, 'approved')}
-                                className="text-xs text-[#0066cc] font-medium hover:underline cursor-pointer"
-                              >
-                                Approve
-                              </button>
-                            ) : (
-                              <button 
-                                onClick={() => handleApproveCompany(comp._id, comp.status === 'approved' ? 'rejected' : 'approved')}
-                                className="text-xs text-[#6e6e73] hover:text-[#1d1d1f] font-medium cursor-pointer"
-                              >
-                                {comp.status === 'approved' ? 'Revoke Access' : 'Restore Access'}
-                              </button>
-                            )}
+                            <div className="flex items-center justify-end gap-2">
+                              {comp.status === 'pending' ? (
+                                <>
+                                  <button 
+                                    onClick={() => handleApproveCompany(comp._id, 'approved')}
+                                    className="px-3 py-1 bg-[#34c759] hover:bg-[#30b753] text-white text-[11px] font-medium rounded-full cursor-pointer shadow-2xs transition-all active:scale-95"
+                                  >
+                                    Approve
+                                  </button>
+                                  <button 
+                                    onClick={() => handleApproveCompany(comp._id, 'rejected')}
+                                    className="px-3 py-1 bg-white border border-[#d2d2d7] hover:bg-[#ff3b30]/10 hover:border-[#ff3b30]/30 hover:text-[#ff3b30] text-[#1d1d1f] text-[11px] font-medium rounded-full cursor-pointer transition-all active:scale-95"
+                                  >
+                                    Reject
+                                  </button>
+                                </>
+                              ) : (
+                                <>
+                                  <button 
+                                    onClick={() => handleApproveCompany(comp._id, comp.status === 'approved' ? 'rejected' : 'approved')}
+                                    className={`px-3 py-1 text-[11px] font-medium rounded-full cursor-pointer transition-all active:scale-95 ${
+                                      comp.status === 'approved'
+                                        ? 'bg-white border border-[#d2d2d7] hover:border-[#ff3b30]/40 text-[#ff3b30] hover:bg-[#ff3b30]/10'
+                                        : 'bg-[#34c759] hover:bg-[#30b753] text-white shadow-2xs'
+                                    }`}
+                                  >
+                                    {comp.status === 'approved' ? 'Revoke Access' : 'Restore Access'}
+                                  </button>
+                                  <button 
+                                    onClick={() => handleApproveCompany(comp._id, 'pending')}
+                                    className="px-2 py-1 text-[11px] text-[#86868b] hover:text-[#1d1d1f] hover:underline cursor-pointer"
+                                    title="Move back to Pending Approvals queue"
+                                  >
+                                    Reset to Pending
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))}

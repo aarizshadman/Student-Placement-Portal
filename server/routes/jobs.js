@@ -54,7 +54,7 @@ router.get('/', async (req, res) => {
  * @desc    Get all jobs posted by the logged-in company
  * @access  Private (Company)
  */
-router.get('/company/my-jobs', protect, authorize('company'), async (req, res) => {
+router.get('/company/my-jobs', protect, authorize('company'), approved, async (req, res) => {
   try {
     const company = await Company.findOne({ user: req.user._id });
     if (!company) {

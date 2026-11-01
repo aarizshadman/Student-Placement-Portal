@@ -69,10 +69,16 @@ export default function Navbar() {
         { name: 'AI Assistant', href: '/student/dashboard?tab=chatbot', icon: MessageCircle }
       );
     } else if (user.role === 'company') {
-      roleLinks.push(
-        { name: 'Dashboard', href: '/company/dashboard', icon: Briefcase },
-        { name: 'Post Job', href: '/company/dashboard?tab=post-job', icon: Settings }
-      );
+      if (user.isApproved) {
+        roleLinks.push(
+          { name: 'Dashboard', href: '/company/dashboard', icon: Briefcase },
+          { name: 'Post Job', href: '/company/dashboard?tab=post-job', icon: Settings }
+        );
+      } else {
+        roleLinks.push(
+          { name: 'Under Review', href: '/company/dashboard', icon: Briefcase }
+        );
+      }
     } else if (user.role === 'admin') {
       roleLinks.push(
         { name: 'Dashboard', href: '/admin', icon: Settings }

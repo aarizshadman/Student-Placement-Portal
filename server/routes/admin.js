@@ -114,10 +114,10 @@ router.get('/companies', protect, authorize('admin'), async (req, res) => {
  * @access  Private (Admin)
  */
 router.put('/companies/:id/approve', protect, authorize('admin'), async (req, res) => {
-  const { status } = req.body; // 'approved' or 'rejected'
+  const { status } = req.body; // 'approved', 'rejected', or 'pending'
 
-  if (!['approved', 'rejected'].includes(status)) {
-    return res.status(400).json({ message: "Invalid status option. Must be 'approved' or 'rejected'" });
+  if (!['approved', 'rejected', 'pending'].includes(status)) {
+    return res.status(400).json({ message: "Invalid status option. Must be 'approved', 'rejected', or 'pending'" });
   }
 
   try {

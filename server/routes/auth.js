@@ -91,6 +91,16 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email });
 
     if (user && (await user.comparePassword(password))) {
+      // For company accounts, ensure isApproved is always synchronized with Company.status
+      if (user.role === 'company') {
+        const comp = await Company.findOne({ user: user._id });
+        const shouldBeApproved = comp ? comp.status === 'approved' : false;
+        if (user.isApproved !== shouldBeApproved) {
+          user.isApproved = shouldBeApproved;
+          await user.save();
+        }
+      }
+
       res.json({
         _id: user._id,
         email: user.email,
@@ -124,6 +134,18 @@ router.get('/profile', protect, async (req, res) => {
       profileData = await Student.findOne({ user: user._id });
     } else if (user.role === 'company') {
       profileData = await Company.findOne({ user: user._id });
+      if (!profileData) {
+        profileData = await Company.create({
+          user: user._id,
+          companyName: user.email.split('@')[0],
+          status: 'pending'
+        });
+      }
+      const shouldBeApproved = profileData.status === 'approved';
+      if (user.isApproved !== shouldBeApproved) {
+        user.isApproved = shouldBeApproved;
+        await user.save();
+      }
     }
 
     res.json({
@@ -131,6 +153,7 @@ router.get('/profile', protect, async (req, res) => {
       email: user.email,
       role: user.role,
       isApproved: user.isApproved,
+      status: profileData?.status || (user.isApproved ? 'approved' : 'pending'),
       profile: profileData
     });
   } catch (error) {

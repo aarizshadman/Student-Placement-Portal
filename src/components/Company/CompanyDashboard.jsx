@@ -13,6 +13,8 @@ import { getUser, isAuthenticated, getRole, applyAuthFromUrl } from '../../utils
 export default function CompanyDashboard() {
   const [activeTab, setActiveTab] = useState('overview'); // overview, profile, post-job, listings, applicants
   const [profile, setProfile] = useState(null);
+  const [isAccountApproved, setIsAccountApproved] = useState(false);
+  const [companyStatus, setCompanyStatus] = useState('pending');
   const [myJobs, setMyJobs] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState('');
   const [applicants, setApplicants] = useState([]);
@@ -94,13 +96,25 @@ export default function CompanyDashboard() {
       setCompIndustry(pData.industry || '');
       setCompDesc(pData.description || '');
 
-      if (authData.isApproved) {
+      const isApprovedClean = Boolean(authData.isApproved && pData.status === 'approved');
+      setIsAccountApproved(isApprovedClean);
+      setCompanyStatus(pData.status || (isApprovedClean ? 'approved' : 'pending'));
+
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('cc_approved', String(isApprovedClean));
+      }
+
+      if (isApprovedClean) {
         const jobs = await api.jobs.getCompanyJobs();
         setMyJobs(jobs);
+      } else {
+        setMyJobs([]);
       }
     } catch (err) {
       console.error(err);
       setApiError(err.message || 'Failed to load company dashboard.');
+      setIsAccountApproved(false);
+      setMyJobs([]);
     } finally {
       setLoading(false);
     }
@@ -261,8 +275,38 @@ export default function CompanyDashboard() {
     );
   }
 
-  // Pending approval screen
-  if (profile && profile.status !== 'approved') {
+  // Strict Gate: Block access until approved by Placement Cell Admin
+  if (!isAccountApproved || !profile || profile.status !== 'approved') {
+    if (companyStatus === 'rejected' || profile?.status === 'rejected') {
+      return (
+        <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
+          <div className="max-w-md w-full bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[26px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] text-center flex flex-col items-center gap-5">
+            <div className="w-14 h-14 rounded-full bg-[#ff3b30]/10 text-[#ff3b30] flex items-center justify-center">
+              <ShieldAlert size={26} />
+            </div>
+            <div>
+              <h1 className="text-xl font-semibold text-[#1d1d1f]">Recruiter Account Application Declined</h1>
+              <p className="text-xs text-[#86868b] mt-1.5 leading-relaxed">
+                Your recruiter verification request for <strong>{profile?.companyName || 'your organization'}</strong> was not approved by the placement cell coordinator.
+              </p>
+            </div>
+            <div className="bg-[#f5f5f7] border border-[#e5e5ea] rounded-2xl p-4 text-xs text-[#6e6e73] w-full text-left leading-relaxed">
+              <div className="font-semibold text-[#1d1d1f] mb-1.5">Assistance & Appeal:</div>
+              <div>• Contact placement cell administration at <span className="text-[#0066cc] font-medium">admin@placement.edu</span>.</div>
+              <div className="mt-1">• Provide corporate credentials and official placement authorization.</div>
+            </div>
+            <button 
+              onClick={fetchCompanyData}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#f5f5f7] hover:bg-[#e5e5ea] text-[#1d1d1f] text-xs font-medium active:scale-95 transition-all cursor-pointer"
+            >
+              <RefreshCw size={13} />
+              <span>Refresh Status</span>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
         <div className="max-w-md w-full bg-white border border-[#e5e5ea] p-8 sm:p-9 rounded-[26px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] text-center flex flex-col items-center gap-5">
@@ -272,14 +316,21 @@ export default function CompanyDashboard() {
           <div>
             <h1 className="text-xl font-semibold text-[#1d1d1f]">Recruiter Account Under Review</h1>
             <p className="text-xs text-[#86868b] mt-1.5 leading-relaxed">
-              Your corporate profile for <strong>{profile.companyName}</strong> has been received and is being verified by the university placement cell coordinator.
+              Your corporate profile for <strong>{profile?.companyName || 'your organization'}</strong> has been received and is currently in the university placement cell verification queue.
             </p>
           </div>
           <div className="bg-[#f5f5f7] border border-[#e5e5ea] rounded-2xl p-4 text-xs text-[#6e6e73] w-full text-left leading-relaxed">
-            <div className="font-semibold text-[#1d1d1f] mb-1.5">Verification Timeline:</div>
-            <div>• Placement coordinators verify corporate credentials within 24 hours.</div>
-            <div className="mt-1">• After verification, you can post vacancies and review student portfolios.</div>
+            <div className="font-semibold text-[#1d1d1f] mb-1.5">Verification Timeline & Rules:</div>
+            <div>• Recruiter dashboard access is granted strictly after Placement Cell Admin approval.</div>
+            <div className="mt-1">• Once approved by the placement cell, you will instantly get full access to publish job openings and review candidate resumes.</div>
           </div>
+          <button 
+            onClick={fetchCompanyData}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0066cc] text-white text-xs font-medium hover:bg-[#0077ed] active:scale-95 transition-all shadow-xs cursor-pointer"
+          >
+            <RefreshCw size={13} />
+            <span>Check Approval Status</span>
+          </button>
         </div>
       </div>
     );

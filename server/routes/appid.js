@@ -180,48 +180,50 @@ router.get(AFTER_AUTH_ROUTE, requireConfigured, async (req, res) => {
           status: 'pending'
         });
       }
-    } else if (user.role !== intentRole) {
-      // The same email already exists under a different role (e.g. a student who
-      // previously signed in via the Student Portal now chooses the Recruiter
-      // Portal). Honor the portal the user picked: switch the role and ensure the
-      // matching profile exists so the JWT role stays in sync with the database
-      // (the auth middleware rejects tokens whose role mismatches the record).
-      user.role = intentRole;
-      user.isApproved = intentRole !== 'company';
-      await user.save();
+    } else {
+      // User exists
+      if (user.role !== intentRole) {
+        user.role = intentRole;
+        user.isApproved = intentRole !== 'company';
+        await user.save();
+      }
 
-      if (intentRole === 'student') {
-        await Student.findOneAndUpdate(
-          { user: user._id },
-          {
-            $setOnInsert: {
-              user: user._id,
-              fullName: name || 'New Student',
-              phone: '',
-              education: [],
-              skills: [],
-              projects: [],
-              cgpa: 0
-            }
-          },
-          { upsert: true }
-        );
-      } else {
-        await Company.findOneAndUpdate(
-          { user: user._id },
-          {
-            $setOnInsert: {
-              user: user._id,
-              companyName: name || email.split('@')[0],
-              phone: '',
-              website: '',
-              industry: '',
-              description: '',
-              status: 'pending'
-            }
-          },
-          { upsert: true }
-        );
+      // Ensure appropriate profile document exists and approval state is synced
+      if (intentRole === 'company') {
+        let comp = await Company.findOne({ user: user._id });
+        if (!comp) {
+          comp = await Company.create({
+            user: user._id,
+            companyName: name || email.split('@')[0],
+            phone: '',
+            website: '',
+            industry: '',
+            description: '',
+            status: 'pending'
+          });
+          user.isApproved = false;
+          await user.save();
+        } else {
+          // Strictly sync user.isApproved with company status
+          const isCompApproved = comp.status === 'approved';
+          if (user.isApproved !== isCompApproved) {
+            user.isApproved = isCompApproved;
+            await user.save();
+          }
+        }
+      } else if (intentRole === 'student') {
+        let stud = await Student.findOne({ user: user._id });
+        if (!stud) {
+          await Student.create({
+            user: user._id,
+            fullName: name || 'New Student',
+            phone: '',
+            education: [],
+            skills: [],
+            projects: [],
+            cgpa: 0
+          });
+        }
       }
     }
 
